@@ -12,3 +12,23 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+enum ContactMethod {
+  EMAIL
+  PHONE
+  FACEBOOK
+}
+
+model Report {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  contactFullName String
+  contactMethod   ContactMethod
+  contactInfo     String
+  address         String
+  description     String
+  locationLat     Float
+  locationLng     Float
+}

@@ -12,6 +12,7 @@ import {
 	DialogTrigger,
 } from "@/components/ui/dialog";
 import { Location } from '@/utils/api';
+import { defaultLocation } from '@/lib/utils';
 
 interface MapViewProps extends MapProps {
 	locations: Location[];
@@ -23,8 +24,8 @@ export function MapView({ locations, ...props }: MapViewProps) {
 			<Map
 				mapId={env.NEXT_PUBLIC_MAPS_MAP_ID}
 				defaultZoom={14}
-				defaultCenter={{ lat: 42.01, lng: 21.35 }}
-				mapTypeId='satellite'
+				defaultCenter={defaultLocation}
+				mapTypeId='hybrid'
 				{...props}>
 				{locations.map((location: Location) => (
 					<PoiMarker key={location.id} location={location} />

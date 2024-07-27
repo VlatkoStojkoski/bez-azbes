@@ -6,6 +6,8 @@
   :root {
     --gradient: linear-gradient(to top left, #accbee, #e7f0fd);
     --background: 225 42.9% 6.4%;
+    --background-secondary: 226 41% 10%;
+    --background-tertiary: 226 41% 18%;
     --foreground: 225 6% 99%;
     --muted: 225 33% 24%;
     --muted-foreground: 225 6% 58%;
