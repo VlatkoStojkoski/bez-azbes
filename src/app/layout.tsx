@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import {
   ClerkProvider
 } from '@clerk/nextjs';
+import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 import { Navbar } from "./navbar";
 
@@ -27,6 +28,7 @@ export default function RootLayout({
         <body className={`${inter.className} min-w-full min-h-dvh w-full h-dvh !pt-navbar`}>
           <Navbar />
           {children}
+          <Toaster richColors={true} />
         </body>
       </html>
     </ClerkProvider>

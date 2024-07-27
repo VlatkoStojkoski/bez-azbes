@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { AsYouType } from 'libphonenumber-js';
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
 	Form,
@@ -25,9 +26,11 @@ import { Input } from "@/components/ui/input";
 import { newReportSchema } from "@/lib/api/reports.model";
 import { contactMethodBasedHelpText, contactMethodBasedPlaceholder, defaultLocation } from "@/lib/utils";
 import { MapLocationInput } from "@/components/map-location-input";
+import { waitTime } from "@/utils/general";
+import { LoaderCircle } from "lucide-react";
 
 export function ReportForm() {
-	const form = useForm<z.infer<typeof newReportSchema>>({
+	const form = useForm<z.output<typeof newReportSchema>>({
 		resolver: zodResolver(newReportSchema),
 		defaultValues: {
 			address: '',
@@ -37,13 +40,15 @@ export function ReportForm() {
 			fullName: '',
 			locationLat: defaultLocation.lat,
 			locationLng: defaultLocation.lng,
-		}
+		},
 	});
 
 	const formValues = form.watch();
 
-	function onSubmit(values: z.infer<typeof newReportSchema>) {
+	async function onSubmit(values: z.infer<typeof newReportSchema>) {
 		console.log(values);
+		await waitTime(2000);
+		toast.success('Вашата пријава е успешно испратена.');
 	}
 
 	return (
@@ -146,7 +151,28 @@ export function ReportForm() {
 					<FormMessage />
 				</FormItem>
 
-				<Button type="submit">Испрати</Button>
+				<FormField
+					control={form.control}
+					name="description"
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel>Опис</FormLabel>
+							<FormControl>
+								<Input placeholder="Азбестен кров" {...field} />
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+
+				<Button type="submit" disabled={form.formState.isSubmitting}>
+					{
+						form.formState.isSubmitting ?
+							<LoaderCircle className="w-6 h-6 mr-2 animate-spin" /> :
+							null
+					}
+					Испрати
+				</Button>
 			</form>
 		</Form>
 	);
