@@ -1,15 +1,15 @@
 <svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
 <circle cx="512" cy="512" r="475" fill="url(#paint0_linear_4_2)"/>
-<path d="M324 658H309V673V807C309 848.421 342.579 882 384 882H639C680.421 882 714 848.421 714 807V673V658H699H324Z" fill="#F20000" stroke="white" stroke-width="30"/>
-<rect x="684" y="261" width="105" height="389" rx="35" fill="#F20000" stroke="white" stroke-width="30"/>
+<path d="M336.156 647.548H321.156V662.548V787.861C321.156 827.134 352.993 858.971 392.266 858.971H630.734C670.007 858.971 701.844 827.134 701.844 787.861V662.548V647.548H686.844H336.156Z" fill="#8B94A5" stroke="white" stroke-width="30"/>
+<rect x="672" y="246.985" width="123" height="431" rx="35" fill="#8B94A5" stroke="white" stroke-width="30"/>
 <g filter="url(#filter0_d_4_2)">
-<path d="M447.034 194.207C475.675 144.598 547.325 144.597 575.966 194.207L809.93 599.46C838.555 649.043 802.746 711 745.463 711H277.537C220.254 711 184.445 649.043 213.07 599.46L447.034 194.207Z" fill="#F20000"/>
-<path d="M822.92 591.96L588.957 186.708C554.542 127.097 468.458 127.098 434.043 186.708L200.08 591.961C165.672 651.559 208.726 726 277.537 726H745.464C814.274 726 857.328 651.559 822.92 591.96Z" stroke="white" stroke-width="30"/>
+<path d="M451.213 214.795C477.997 168.402 545.003 168.402 571.787 214.795L790.583 593.776C817.352 640.144 783.864 698.084 730.296 698.084H292.704C239.136 698.084 205.648 640.144 232.417 593.776L451.213 214.795Z" fill="#8B94A5"/>
+<path d="M803.573 586.276L584.778 207.295C552.22 150.901 470.78 150.902 438.222 207.296L219.427 586.276C186.875 642.66 227.607 713.084 292.704 713.084H730.296C795.393 713.084 836.125 642.66 803.573 586.276Z" stroke="white" stroke-width="30"/>
 </g>
-<circle cx="511.603" cy="589.497" r="29.0163" fill="white"/>
-<rect x="482.586" y="317.469" width="58.0327" height="206.741" rx="29.0163" fill="white"/>
+<circle cx="511.596" cy="584.458" r="27.1352" fill="white"/>
+<rect x="484.461" y="330.066" width="54.2704" height="193.338" rx="27.1352" fill="white"/>
 <defs>
-<filter id="filter0_d_4_2" x="162.953" y="121" width="697.095" height="634" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<filter id="filter0_d_4_2" x="182.953" y="144" width="657.095" height="598.084" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
 <feFlood flood-opacity="0" result="BackgroundImageFix"/>
 <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
 <feOffset dy="4"/>

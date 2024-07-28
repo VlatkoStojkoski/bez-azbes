@@ -9,7 +9,7 @@ export default async function Home() {
   return (
     <>
       <MapView className="w-full h-full" locations={locations} />
-      <Button variant='destructive' className='fixed bottom-6 left-1/2 -translate-x-1/2 z-40 text-xl px-6 py-2 h-auto border-white'>
+      <Button variant='secondary' className='fixed bottom-6 left-1/2 -translate-x-1/2 z-40 text-xl px-6 py-2 h-auto border-2 border-white'>
         <Link href="/reports/new">
           Пријави
         </Link>
