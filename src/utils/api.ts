@@ -1,39 +1,25 @@
+import { ZodError } from "zod";
+
 type BaseError = {
 	message: string;
 }
 
-export type ApiResponse<TData = any, TError extends BaseError = BaseError> = {
-	success: true;
-	data: TData;
-	error: null;
-} | {
-	success: false;
-	data: null;
-	error: TError;
-} | {
-	success: null;
-	data: null;
-	error: null;
-};
+export type ApiResponse<TData = any, TError extends BaseError = BaseError> =
+	| { success: true; data: TData; error: null; }
+	| { success: false; data: null; error: TError; }
+	| { success: null; data: null; error: null; };
 
 export function createResponse<TData>(data: TData): ApiResponse<TData> {
-	return {
-		success: true,
-		data,
-		error: null
-	};
+	return { success: true, data, error: null };
 }
 
-export function createErrorResponse<TError extends BaseError>(
+export function createErrorResponse<TData, TError extends BaseError>(
 	message: string,
 	extra: Omit<TError, 'message'> = {} as Omit<TError, 'message'>
-): ApiResponse<null, TError> {
+): ApiResponse<TData, TError> {
 	return {
 		success: false,
 		data: null,
-		error: {
-			message,
-			...extra
-		} as TError
+		error: { message, ...extra } as TError
 	};
 }

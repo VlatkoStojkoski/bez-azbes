@@ -1,11 +1,11 @@
 'use client';
 
-import { useActionState, useEffect, useRef, useTransition } from "react";
+import { useActionState, useEffect, useState, useTransition } from "react";
 import { useFormStatus } from "react-dom";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AsYouType } from 'libphonenumber-js';
-import { LoaderCircle } from "lucide-react";
+import { FileImageIcon, LoaderCircle } from "lucide-react";
 import { UseFormReturn, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -28,7 +28,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { ApiCreateReportResponse, createReport } from "@/lib/actions/reports";
+import { createReport } from "@/lib/actions/reports";
 import { NewReport, newReportSchema } from "@/lib/api/reports.model";
 import { contactMethodBasedHelpText, contactMethodBasedPlaceholder, defaultLocation } from "@/lib/utils";
 
@@ -39,14 +39,23 @@ export function ReportForm() {
 	const form = useForm<NewReport>({
 		resolver: zodResolver(newReportSchema),
 		defaultValues: {
-			address: '',
-			contactInfo: '',
-			contactMethod: 'phone',
-			description: '',
-			fullName: '',
+			address: '4 Јули 33/4',
+			contactInfo: '078494992',
+			contactMethod: 'PHONE',
+			description: 'Азбестен кров',
+			fullName: 'Влатко Стојкоски',
 			locationLat: defaultLocation.lat,
 			locationLng: defaultLocation.lng,
 		},
+		// defaultValues: {
+		// 	address: '',
+		// 	contactInfo: '',
+		// 	contactMethod: 'phone',
+		// 	description: '',
+		// 	fullName: '',
+		// 	locationLat: defaultLocation.lat,
+		// 	locationLng: defaultLocation.lng,
+		// },
 	});
 
 	useEffect(() => {
@@ -88,7 +97,28 @@ export function ReportForm() {
 function ReportFormFields({ form }: { form: UseFormReturn<NewReport> }) {
 	const { pending: isPending } = useFormStatus();
 
-	const formValues = form.watch();
+	const pictureValue = form.watch('picture');
+	const contactMethodValue = form.watch('contactMethod');
+
+	const [pictureString, setPictureString] = useState<string | null>(null);
+
+	useEffect(() => {
+		if (pictureValue?.length !== 1) {
+			setPictureString(null);
+			return;
+		}
+
+		let _pictureString = pictureValue ? URL.createObjectURL(pictureValue[0]) : null;
+		setPictureString(_pictureString);
+		return () => {
+			if (_pictureString) {
+				URL.revokeObjectURL(_pictureString);
+			}
+			_pictureString = null;
+		};
+	}, [pictureValue]);
+
+	const pictureRef = form.register("picture");
 
 	return (
 		<>
@@ -121,9 +151,9 @@ function ReportFormFields({ form }: { form: UseFormReturn<NewReport> }) {
 								</SelectTrigger>
 							</FormControl>
 							<SelectContent>
-								<SelectItem value="phone">Телефонски број</SelectItem>
-								<SelectItem value="email">E-пошта</SelectItem>
-								<SelectItem value="facebook">Messenger</SelectItem>
+								<SelectItem value="PHONE">Телефонски број</SelectItem>
+								<SelectItem value="EMAIL">E-пошта</SelectItem>
+								<SelectItem value="FACEBOOK">Messenger</SelectItem>
 							</SelectContent>
 						</Select>
 						<FormMessage />
@@ -139,7 +169,7 @@ function ReportFormFields({ form }: { form: UseFormReturn<NewReport> }) {
 						<FormLabel>Контакт податоци</FormLabel>
 						<FormControl>
 							{
-								formValues.contactMethod === 'phone' ? (
+								contactMethodValue === 'PHONE' ? (
 									<Input
 										placeholder="071 234 567"
 										value={value}
@@ -147,12 +177,12 @@ function ReportFormFields({ form }: { form: UseFormReturn<NewReport> }) {
 											onChange(new AsYouType('MK').input(ev.target.value));
 										}} {...fieldRest} />
 								) : (
-									<Input placeholder={contactMethodBasedPlaceholder[formValues.contactMethod]} value={value} onChange={onChange} {...fieldRest} />
+									<Input placeholder={contactMethodBasedPlaceholder[contactMethodValue]} value={value} onChange={onChange} {...fieldRest} />
 								)
 							}
 						</FormControl>
 						<FormDescription>
-							{contactMethodBasedHelpText[formValues.contactMethod]}
+							{contactMethodBasedHelpText[contactMethodValue]}
 						</FormDescription>
 						<FormMessage />
 					</FormItem>
@@ -203,6 +233,32 @@ function ReportFormFields({ form }: { form: UseFormReturn<NewReport> }) {
 				)}
 			/>
 
+			<FormField
+				control={form.control}
+				name="picture"
+				render={() => (
+					<FormItem>
+						<FormLabel className="flex flex-col gap-2 gap w-full">
+							Прикачете слика
+							<div className="w-full p-6 bg-background rounded-lg border flex items-center justify-center cursor-pointer">
+								{
+									pictureString !== null ? (
+										<img src={pictureString} />
+									) : (
+										<FileImageIcon className="size-12" />
+									)
+								}
+							</div>
+						</FormLabel>
+						<FormControl>
+							<Input type="file" placeholder="shadcn" accept="image/*" {...pictureRef} className="hidden" />
+						</FormControl>
+						<FormMessage />
+					</FormItem >
+				)
+				}
+			/>
+
 			<Button type="submit" disabled={form.formState.isSubmitting}>
 				{
 					form.formState.isSubmitting ?
@@ -210,7 +266,7 @@ function ReportFormFields({ form }: { form: UseFormReturn<NewReport> }) {
 						null
 				}
 				Испрати
-			</Button>
+			</Button >
 		</>
 	);
 }

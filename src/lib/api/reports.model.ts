@@ -1,7 +1,9 @@
 import { Prisma } from "@prisma/client";
 import { z } from "zod";
 
-const contactMethodSchema = z.enum(["phone", "email", "facebook"], {
+import { generateImageInputSchema } from "@/lib/utils";
+
+const contactMethodSchema = z.enum(["PHONE", "EMAIL", "FACEBOOK"], {
 	message: "Ве молиме одберете валиден начин на контакт",
 	required_error: "Ве молиме одберете начин на контакт",
 });
@@ -36,6 +38,9 @@ export const newReportSchema = z.object({
 	}).min(1, "Ве молиме внесете опис"),
 	locationLat: z.number(),
 	locationLng: z.number(),
+	picture: generateImageInputSchema(5).refine(fileList => fileList.length === 1, {
+		message: "Ве молиме прикачете само една слика",
+	}),
 });
 
 export type NewReport = z.infer<typeof newReportSchema>;

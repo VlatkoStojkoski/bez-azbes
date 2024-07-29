@@ -1,15 +1,19 @@
-import { ZodError } from "zod";
+'use server';
 
-import { DBReport, NewReport } from "@/lib/api/reports.model";
-import { reports } from "@/lib/api/test-data";
-import { ApiResponse, createResponse } from "@/utils/api";
-import { waitTime } from "@/utils/general";
+import { z } from "zod";
 
-
-export type ApiCreateReportResponse = ApiResponse<Partial<DBReport>, { message: string, errors?: ZodError['errors'] }>;
+import { ApiCreateReportResponse, createReport as createReportApi } from "@/lib/api/reports";
+import { NewReport, newReportSchema } from "@/lib/api/reports.model";
+import { createErrorResponse } from "@/utils/api";
 
 export async function createReport(prevState: ApiCreateReportResponse, formData: unknown): Promise<ApiCreateReportResponse> {
-	await waitTime(1000);
-	let dbData = reports[0];
-	return createResponse(dbData);
+	const { data, error, success } = newReportSchema.safeParse(formData);
+	if (!success) {
+		return createErrorResponse<Partial<NewReport>, { message: string; errors: z.ZodError['errors'] }>(
+			'Invalid data',
+			{ errors: error.errors }
+		);
+	}
+	const res = await createReportApi(data as NewReport);
+	return res;
 }

@@ -12,14 +12,14 @@ import {
 	DialogTrigger,
 } from "@/components/ui/dialog";
 import { env } from '@/env';
+import { DBReport } from '@/lib/api/reports.model';
 import { defaultLocation } from '@/lib/utils';
-import { Location } from '@/utils/api';
 
 interface MapViewProps extends MapProps {
-	locations: Location[];
+	reports: DBReport[];
 }
 
-export function MapView({ locations, ...props }: MapViewProps) {
+export function MapView({ reports, ...props }: MapViewProps) {
 	return (
 		<APIProvider apiKey={env.NEXT_PUBLIC_MAPS_API_KEY} onLoad={() => console.log('Maps API has loaded.')}>
 			<Map
@@ -28,7 +28,7 @@ export function MapView({ locations, ...props }: MapViewProps) {
 				defaultCenter={defaultLocation}
 				mapTypeId='hybrid'
 				{...props}>
-				{locations.map((location: Location) => (
+				{reports.map((location: DBReport) => (
 					<PoiMarker key={location.id} location={location} />
 				))}
 			</Map>
@@ -37,11 +37,14 @@ export function MapView({ locations, ...props }: MapViewProps) {
 	);
 }
 
-function PoiMarker({ location }: { location: Location }) {
+function PoiMarker({ location }: { location: DBReport }) {
 	return (
 		<AdvancedMarker
 			key={location.id}
-			position={location.location}
+			position={{
+				lat: location.locationLat,
+				lng: location.locationLng,
+			}}
 			onClick={() => { }}
 		>
 			<Dialog>
