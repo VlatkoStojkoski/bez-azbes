@@ -1,7 +1,7 @@
 'use client';
 
 import { APIProvider, AdvancedMarker, Map, type MapProps } from '@vis.gl/react-google-maps';
-import { env } from '@/env';
+
 import LogoIcon from '@/components/icons/logo';
 import {
 	Dialog,
@@ -11,8 +11,9 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
-import { Location } from '@/utils/api';
+import { env } from '@/env';
 import { defaultLocation } from '@/lib/utils';
+import { Location } from '@/utils/api';
 
 interface MapViewProps extends MapProps {
 	locations: Location[];

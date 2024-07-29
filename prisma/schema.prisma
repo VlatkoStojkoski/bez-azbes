@@ -31,4 +31,6 @@ model Report {
   description     String
   locationLat     Float
   locationLng     Float
+
+  submittedBy String
 }

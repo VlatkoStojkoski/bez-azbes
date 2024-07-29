@@ -88,7 +88,7 @@ const config = {
         "accordion-up": "accordion-up 0.2s ease-out",
       },
       spacing: {
-        'navbar': 'calc(3rem + 2*theme("spacing.3"))',
+        'navbar': 'calc(3rem + 2*theme(spacing.3))',
       },
     },
   },

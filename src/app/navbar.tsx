@@ -1,5 +1,3 @@
-import LogoIcon from '@/components/icons/logo';
-import { Button } from '@/components/ui/button';
 import {
 	SignInButton,
 	SignedIn,
@@ -7,6 +5,9 @@ import {
 	UserButton
 } from '@clerk/nextjs';
 import Link from 'next/link';
+
+import LogoIcon from '@/components/icons/logo';
+import { Button } from '@/components/ui/button';
 
 export function Navbar() {
 	return (

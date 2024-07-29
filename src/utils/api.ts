@@ -1,15 +1,39 @@
-import { waitTime } from "./general";
-import { locations } from "./test-data";
-
-export interface Location {
-	id: string;
-	location: google.maps.LatLngLiteral;
-	address: string;
-	submittedBy: string;
+type BaseError = {
+	message: string;
 }
 
-export async function getLocations(): Promise<Location[]> {
-	await waitTime(1000);
+export type ApiResponse<TData = any, TError extends BaseError = BaseError> = {
+	success: true;
+	data: TData;
+	error: null;
+} | {
+	success: false;
+	data: null;
+	error: TError;
+} | {
+	success: null;
+	data: null;
+	error: null;
+};
 
-	return locations;
+export function createResponse<TData>(data: TData): ApiResponse<TData> {
+	return {
+		success: true,
+		data,
+		error: null
+	};
+}
+
+export function createErrorResponse<TError extends BaseError>(
+	message: string,
+	extra: Omit<TError, 'message'> = {} as Omit<TError, 'message'>
+): ApiResponse<null, TError> {
+	return {
+		success: false,
+		data: null,
+		error: {
+			message,
+			...extra
+		} as TError
+	};
 }

@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { z } from "zod";
 
 const contactMethodSchema = z.enum(["phone", "email", "facebook"], {
@@ -36,3 +37,7 @@ export const newReportSchema = z.object({
 	locationLat: z.number(),
 	locationLng: z.number(),
 });
+
+export type NewReport = z.infer<typeof newReportSchema>;
+
+export type DBReport = Prisma.ReportGetPayload<{}>;
