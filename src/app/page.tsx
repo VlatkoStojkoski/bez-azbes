@@ -1,3 +1,4 @@
+import { Send } from "lucide-react";
 import Link from "next/link";
 
 import LogoIcon from "@/components/icons/logo";
@@ -14,9 +15,9 @@ export default function HomePage() {
           <span className='text-3xl sm:text-4xl lg:text-5xl font-bold'>Без Азбест</span>
         </div>
         <p className="w-[clamp(20ch,75vw,30ch)] text-center text-lg lg:text-xl">Пријавете азбест во вашите опкружувања и помогнете ни да најдеме решение.</p>
-        <Button className="h-auto text-lg sm:text-xl px-6 py-2" asChild>
+        <Button className="h-auto text-lg sm:text-xl px-5 py-2 flex flex-row items-center justify-center gap-2" asChild>
           <Link href="/reports/new">
-            Пријави
+            <Send className="size-6" /> Пријави
           </Link>
         </Button>
       </div>
