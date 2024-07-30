@@ -6,13 +6,13 @@ declare global {
 			role?: "admin" | "user";
 		};
 	}
-}
-
-declare global {
 	interface UserPrivateMetadata {
 		preffered: {
 			contactMethod: ContactMethod;
 			contactInfo: string;
 		}
+	}
+	interface UserPublicMetadata {
+		role?: "admin" | "user";
 	}
 }

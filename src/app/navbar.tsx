@@ -4,7 +4,8 @@ import {
 	SignedOut,
 	UserButton
 } from '@clerk/nextjs';
-import { ClipboardList, Home, Menu, Users } from 'lucide-react';
+import { currentUser } from '@clerk/nextjs/server';
+import { ClipboardList, Home, LayoutDashboard, Menu, Users } from 'lucide-react';
 import Link from 'next/link';
 
 import LogoIcon from '@/components/icons/logo';
@@ -29,7 +30,38 @@ import {
 	navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 
-export function Navbar() {
+const navigationMenuItems = [
+	{
+		icon: Home,
+		label: 'Дома',
+		href: '/',
+	},
+	{
+		icon: ClipboardList,
+		label: 'Мои Пријави',
+		href: '/reports',
+	},
+	{
+		icon: Users,
+		label: 'За Нас',
+		href: '/about',
+	},
+];
+
+const adminNavigationItems = [
+	{
+		icon: LayoutDashboard,
+		label: 'Админ',
+		href: '/dashboard',
+	}
+];
+
+export async function Navbar() {
+	const currUser = await currentUser();
+
+	const isAdmin = currUser?.publicMetadata.role === 'admin';
+	const navigationItems = isAdmin ? [...navigationMenuItems, ...adminNavigationItems] : navigationMenuItems;
+
 	return (
 		<div className='fixed top-0 left-0 z-40 w-full h-navbar bg-background/90 border backdrop-blur-[4px]'>
 			<div className="w-full h-full px-4 sm:px-6 py-3 container max-w-screen-lg grid grid-cols-[1fr_auto_auto] lg:grid-cols-[1fr_auto_1fr] gap-3 items-center">
@@ -45,29 +77,17 @@ export function Navbar() {
 				</SignedOut>
 				<SignedIn>
 					<div className="lg:flex-1 h-full">
-						<NavigationMenu className='hidden lg:flex'>
+						<NavigationMenu className='hidden lg:flex items-center justify-center h-full'>
 							<NavigationMenuList>
-								<NavigationMenuItem>
-									<Link href="/" legacyBehavior passHref>
-										<NavigationMenuLink className={navigationMenuTriggerStyle()}>
-											<Home className='size-6 mr-2' />Дома
-										</NavigationMenuLink>
-									</Link>
-								</NavigationMenuItem>
-								<NavigationMenuItem>
-									<Link href="/reports" legacyBehavior passHref>
-										<NavigationMenuLink className={navigationMenuTriggerStyle()}>
-											<ClipboardList className='size-6 mr-2' />Пријави
-										</NavigationMenuLink>
-									</Link>
-								</NavigationMenuItem>
-								<NavigationMenuItem>
-									<Link href="/about" legacyBehavior passHref>
-										<NavigationMenuLink className={navigationMenuTriggerStyle()}>
-											<Users className='size-6 mr-2' />За Нас
-										</NavigationMenuLink>
-									</Link>
-								</NavigationMenuItem>
+								{navigationItems.map((item) => (
+									<NavigationMenuItem key={item.label}>
+										<Link href={item.href} legacyBehavior passHref>
+											<NavigationMenuLink className={navigationMenuTriggerStyle()}>
+												<item.icon className='size-6 mr-2' />{item.label}
+											</NavigationMenuLink>
+										</Link>
+									</NavigationMenuItem>
+								))}
 							</NavigationMenuList>
 						</NavigationMenu>
 
@@ -79,27 +99,15 @@ export function Navbar() {
 									</Button>
 								</DropdownMenuTrigger>
 								<DropdownMenuContent className='min-w-[17ch]'>
-									<DropdownMenuItem asChild>
-										<Link href="/" legacyBehavior passHref>
-											<Button variant='ghost' className='w-full flex items-center justify-start py-3 h-auto'>
-												<Home className='size-6 mr-2' />Дома
-											</Button>
-										</Link>
-									</DropdownMenuItem>
-									<DropdownMenuItem asChild>
-										<Link href="/reports" legacyBehavior passHref>
-											<Button variant='ghost' className='w-full flex items-center justify-start py-3 h-auto'>
-												<ClipboardList className='size-6 mr-2' />Пријави
-											</Button>
-										</Link>
-									</DropdownMenuItem>
-									<DropdownMenuItem asChild>
-										<Link href="/about" legacyBehavior passHref>
-											<Button variant='ghost' className='w-full flex items-center justify-start py-3 h-auto'>
-												<Users className='size-6 mr-2' />За Нас
-											</Button>
-										</Link>
-									</DropdownMenuItem>
+									{navigationItems.map((item) => (
+										<DropdownMenuItem key={item.label} asChild>
+											<Link href={item.href} legacyBehavior passHref>
+												<Button variant='ghost' className='w-full flex items-center justify-start py-3 h-auto'>
+													<item.icon className='size-6 mr-2' />{item.label}
+												</Button>
+											</Link>
+										</DropdownMenuItem>
+									))}
 								</DropdownMenuContent>
 							</div>
 						</DropdownMenu>
