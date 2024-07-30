@@ -78,24 +78,24 @@ export function Navbar() {
 										<Menu className='size-full' />
 									</Button>
 								</DropdownMenuTrigger>
-								<DropdownMenuContent>
+								<DropdownMenuContent className='min-w-[17ch]'>
 									<DropdownMenuItem asChild>
 										<Link href="/" legacyBehavior passHref>
-											<Button variant='ghost' className='w-full flex items-center justify-start'>
+											<Button variant='ghost' className='w-full flex items-center justify-start py-3 h-auto'>
 												<Home className='size-6 mr-2' />Дома
 											</Button>
 										</Link>
 									</DropdownMenuItem>
 									<DropdownMenuItem asChild>
 										<Link href="/reports" legacyBehavior passHref>
-											<Button variant='ghost' className='w-full flex items-center justify-start'>
+											<Button variant='ghost' className='w-full flex items-center justify-start py-3 h-auto'>
 												<ClipboardList className='size-6 mr-2' />Пријави
 											</Button>
 										</Link>
 									</DropdownMenuItem>
 									<DropdownMenuItem asChild>
 										<Link href="/about" legacyBehavior passHref>
-											<Button variant='ghost' className='w-full flex items-center justify-start'>
+											<Button variant='ghost' className='w-full flex items-center justify-start py-3 h-auto'>
 												<Users className='size-6 mr-2' />За Нас
 											</Button>
 										</Link>
