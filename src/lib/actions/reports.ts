@@ -24,7 +24,7 @@ export async function createReport(prevState: ApiCreateReportResponse, formData:
 	const user = await currentUser();
 
 	if (!user) {
-		return createErrorResponse('Не сте најавени');
+		return createErrorResponse('Не сте најавени.');
 	}
 
 	await clerkClient.users.updateUserMetadata(user.id, {

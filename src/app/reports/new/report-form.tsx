@@ -30,7 +30,7 @@ import {
 } from "@/components/ui/select";
 import { createReport } from "@/lib/actions/reports";
 import { NewReport, newReportSchema } from "@/lib/api/reports.model";
-import { contactMethodBasedHelpText, contactMethodBasedPlaceholder, defaultLocation } from "@/lib/utils";
+import { contactMethodHelpText, contactMethodPlaceholder, defaultLocation } from "@/lib/utils";
 
 export function ReportForm() {
 	const [actionState, formAction] = useActionState(createReport, { success: null, data: null, error: null });
@@ -177,12 +177,12 @@ function ReportFormFields({ form }: { form: UseFormReturn<NewReport> }) {
 											onChange(new AsYouType('MK').input(ev.target.value));
 										}} {...fieldRest} />
 								) : (
-									<Input placeholder={contactMethodBasedPlaceholder[contactMethodValue]} value={value} onChange={onChange} {...fieldRest} />
+									<Input placeholder={contactMethodPlaceholder[contactMethodValue]} value={value} onChange={onChange} {...fieldRest} />
 								)
 							}
 						</FormControl>
 						<FormDescription>
-							{contactMethodBasedHelpText[contactMethodValue]}
+							{contactMethodHelpText[contactMethodValue]}
 						</FormDescription>
 						<FormMessage />
 					</FormItem>

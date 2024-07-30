@@ -1,6 +1,9 @@
 import { type ClassValue, clsx } from "clsx";
+import { Mail, Phone } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 import { z } from "zod";
+
+import FacebookIcon from "@/components/icons/facebook";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -8,13 +11,34 @@ export function cn(...inputs: ClassValue[]) {
 
 export const defaultLocation = { lat: 42.01, lng: 21.35 };
 
-export const contactMethodBasedPlaceholder = {
+export const contactMethods = {
+  PHONE: {
+    label: "Тел.",
+    icon: Phone,
+    inputPlaceholder: '070 123 456',
+    inputHelpText: 'Вашиот телефонски број',
+  },
+  EMAIL: {
+    label: "Е-пошта",
+    icon: Mail,
+    inputPlaceholder: 'marko-markovski@gmail.com',
+    inputHelpText: 'Вашата е-пошта',
+  },
+  FACEBOOK: {
+    label: "Facebook",
+    icon: FacebookIcon,
+    inputPlaceholder: 'https://www.facebook.com/marko.markovski.42',
+    inputHelpText: 'Линк до вашиот профил на Facebook',
+  },
+};
+
+export const contactMethodPlaceholder = {
   PHONE: "070 123 456",
   EMAIL: "marko-markovski@gmail.com",
   FACEBOOK: "https://www.facebook.com/marko.markovski.42",
 };
 
-export const contactMethodBasedHelpText = {
+export const contactMethodHelpText = {
   PHONE: "Вашиот телефонски број",
   EMAIL: "Вашата е-пошта",
   FACEBOOK: "Линк до вашиот профил на Facebook",
