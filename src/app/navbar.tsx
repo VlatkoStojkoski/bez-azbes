@@ -72,7 +72,7 @@ export async function Navbar() {
 
 				<SignedOut>
 					<SignInButton>
-						<Button variant='secondary'>Логирај се</Button>
+						<Button variant='secondary' className='-col-start-1 col-span-1'>Логирај се</Button>
 					</SignInButton>
 				</SignedOut>
 				<SignedIn>
