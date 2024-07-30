@@ -2,10 +2,9 @@ import { currentUser } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import { MapView } from "@/components/map-view";
 import { Button } from "@/components/ui/button";
 import { getUsersReports } from "@/lib/api/reports";
-
-import { MapView } from "./map-view";
 
 export default async function ViewReportsPage() {
 	const currUser = await currentUser();

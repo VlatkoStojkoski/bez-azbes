@@ -79,10 +79,53 @@ export async function createReport(reportData: NewReport, {
 	return createResponse(newReportRes);
 }
 
-export async function getAllReports() {
-	await waitTime(1000);
+export async function getReports(config: { skip?: number, take?: number, sort?: 'oldest' | 'newest' }): Promise<ApiResponse<DBReport[]>> {
+	let defaultConfig = {
+		skip: 0,
+		take: 10,
+		sort: 'newest',
+	};
 
-	return createResponse(reports as DBReport[]);
+	const { skip, take, sort } = { ...defaultConfig, ...config };
+
+	try {
+		const reports = await prisma.report.findMany({
+			skip,
+			take,
+			orderBy: {
+				createdAt: sort === 'newest' ? 'desc' : 'asc',
+			},
+		});
+
+		return createResponse(reports);
+	} catch (error) {
+		console.error('[getReports] ERROR:', error);
+
+		return createErrorResponse('Грешка при вчитување на пријавите.');
+	}
+}
+
+export async function getAllReports(config: { sort?: 'oldest' | 'newest' }): Promise<ApiResponse<DBReport[]>> {
+	let defaultConfig = {
+		sort: 'newest',
+	};
+
+	const { sort } = { ...defaultConfig, ...config };
+
+
+	try {
+		const reports = await prisma.report.findMany({
+			orderBy: {
+				createdAt: sort === 'newest' ? 'desc' : 'asc',
+			},
+		});
+
+		return createResponse(reports);
+	} catch (error) {
+		console.error('[getAllReports] ERROR:', error);
+
+		return createErrorResponse('Грешка при вчитување на пријавите.');
+	}
 }
 
 export async function getUsersReports(userId: string): Promise<ApiResponse<DBReport[]>> {

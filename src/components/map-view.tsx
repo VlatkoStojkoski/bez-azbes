@@ -7,6 +7,7 @@ import { MapPin, User } from 'lucide-react';
 import { useAsyncMemo } from "use-async-memo";
 
 import LogoIcon from '@/components/icons/logo';
+import { ReportDetailsContent } from '@/components/report-details-content';
 import {
 	Dialog,
 	DialogContent,
@@ -44,22 +45,6 @@ export function MapView({ reports, ...props }: MapViewProps) {
 function PoiMarker({ report }: { report: DBReport }) {
 	const [hasBeenOpened, setHasBeenOpened] = useState(false);
 
-	const contactMethod = useMemo(() => {
-		return contactMethods[report.contactMethod];
-	}, [report.contactMethod]);
-
-	const pictureSrc = useAsyncMemo(async () => {
-		if (!hasBeenOpened) {
-			return null;
-		}
-
-		const pictureUrl = await getReportPictureUrl(report);
-
-		console.log('PICTURE URL:', pictureUrl);
-
-		return pictureUrl ?? null;
-	}, [report.pictureBucket, report.pictureKey, hasBeenOpened], null);
-
 	return (
 		<AdvancedMarker
 			key={report.id}
@@ -80,22 +65,7 @@ function PoiMarker({ report }: { report: DBReport }) {
 						</DialogTitle>
 					</DialogHeader>
 
-					<div className="w-full max-h-[400px] bg-background-secondary border">
-						{
-							pictureSrc !== null && (
-								<img src={pictureSrc} alt={report.description} className='w-full h-full object-contain' />
-							)
-						}
-					</div>
-
-					<div className="grid grid-cols-[auto_1fr] gap-x-2 gap-y-4">
-						<User className='size-6' />
-						<h3>Пријавил: {report.contactFullName}</h3>
-						<contactMethod.icon className='size-6' />
-						<h3>Контакт: {report.contactInfo} ({contactMethod.label})</h3>
-						<MapPin className='size-6' />
-						<h3>Адреса: {report.address}</h3>
-					</div>
+					<ReportDetailsContent report={report} shouldGetImage={hasBeenOpened} />
 				</DialogContent>
 			</Dialog>
 		</AdvancedMarker>
