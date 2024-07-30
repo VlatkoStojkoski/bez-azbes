@@ -9,6 +9,7 @@ import { Toaster } from "@/components/ui/sonner";
 
 import "./globals.css";
 import { Navbar } from "./navbar";
+import UrlErrors from "./url-errors";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -32,6 +33,7 @@ export default function RootLayout({
           <Navbar />
           {children}
           <Toaster richColors={true} />
+          <UrlErrors />
         </body>
       </html>
     </ClerkProvider>

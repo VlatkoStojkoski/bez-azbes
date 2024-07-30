@@ -259,9 +259,9 @@ function ReportFormFields({ form }: { form: UseFormReturn<NewReport> }) {
 				}
 			/>
 
-			<Button type="submit" disabled={form.formState.isSubmitting}>
+			<Button type="submit" disabled={form.formState.isSubmitting} className="mt-6">
 				{
-					form.formState.isSubmitting ?
+					isPending ?
 						<LoaderCircle className="w-6 h-6 mr-2 animate-spin" /> :
 						null
 				}

@@ -31,6 +31,8 @@ model Report {
   description     String
   locationLat     Float
   locationLng     Float
+  pictureBucket   String
+  pictureKey      String
 
   submittedBy String
 }

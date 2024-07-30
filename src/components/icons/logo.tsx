@@ -14,7 +14,7 @@ export default function LogoIcon({ withBackground, ...props }: LogoIconProps) {
 		>
 			{
 				withBackground === true && (
-					<circle cx="512" cy="512" r="475" fill="url(#paint0_linear_4_2)"></circle>
+					<circle cx="512" cy="512" r="512" fill="url(#paint0_linear_4_2)"></circle>
 				)
 			}
 			<path
