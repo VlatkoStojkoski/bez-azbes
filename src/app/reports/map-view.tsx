@@ -10,7 +10,6 @@ import LogoIcon from '@/components/icons/logo';
 import {
 	Dialog,
 	DialogContent,
-	DialogDescription,
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
@@ -74,18 +73,20 @@ function PoiMarker({ report }: { report: DBReport }) {
 				<DialogTrigger onClick={() => setHasBeenOpened(true)}>
 					<LogoIcon className='size-10' />
 				</DialogTrigger>
-				<DialogContent>
+				<DialogContent className='rounded-lg'>
 					<DialogHeader>
-						<DialogTitle className='text-left'>
+						<DialogTitle className='text-left w-[95%] leading-snug'>
 							{report.description}
 						</DialogTitle>
 					</DialogHeader>
 
-					{
-						pictureSrc !== null && (
-							<img src={pictureSrc} alt={report.description} className='w-full h-auto' />
-						)
-					}
+					<div className="w-full max-h-[400px] bg-background-secondary border">
+						{
+							pictureSrc !== null && (
+								<img src={pictureSrc} alt={report.description} className='w-full h-full object-contain' />
+							)
+						}
+					</div>
 
 					<div className="grid grid-cols-[auto_1fr] gap-x-2 gap-y-4">
 						<User className='size-6' />

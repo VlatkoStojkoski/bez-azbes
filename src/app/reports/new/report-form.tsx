@@ -4,8 +4,10 @@ import { useActionState, useEffect, useState, useTransition } from "react";
 import { useFormStatus } from "react-dom";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { ContactMethod } from "@prisma/client";
 import { AsYouType } from 'libphonenumber-js';
 import { FileImageIcon, LoaderCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { UseFormReturn, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -32,18 +34,27 @@ import { createReport } from "@/lib/actions/reports";
 import { NewReport, newReportSchema } from "@/lib/api/reports.model";
 import { contactMethodHelpText, contactMethodPlaceholder, defaultLocation } from "@/lib/utils";
 
-export function ReportForm() {
+export type ReportFormProps = {
+	defaults?: {
+		name?: string;
+		contactInfo?: string;
+		contactMethod?: ContactMethod;
+	};
+};
+
+export function ReportForm({ defaults }: ReportFormProps) {
 	const [actionState, formAction] = useActionState(createReport, { success: null, data: null, error: null });
 	const [isTransitionPending, startTransition] = useTransition();
+	const router = useRouter();
 
 	const form = useForm<NewReport>({
 		resolver: zodResolver(newReportSchema),
 		defaultValues: {
-			address: '4 Јули 33/4',
-			contactInfo: '078494992',
-			contactMethod: 'PHONE',
-			description: 'Азбестен кров',
-			fullName: 'Влатко Стојкоски',
+			address: '',
+			contactInfo: defaults?.contactInfo ?? '',
+			contactMethod: defaults?.contactMethod ?? 'PHONE',
+			description: '',
+			fullName: defaults?.name ?? '',
 			locationLat: defaultLocation.lat,
 			locationLng: defaultLocation.lng,
 		},
@@ -75,6 +86,7 @@ export function ReportForm() {
 		if (success === true) {
 			toast.success('Пријавата е успешно испратена.');
 			form.reset();
+			router.push('/reports');
 			return;
 		}
 	}, [actionState]);

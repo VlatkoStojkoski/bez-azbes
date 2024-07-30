@@ -7,3 +7,12 @@ declare global {
 		};
 	}
 }
+
+declare global {
+	interface UserPrivateMetadata {
+		preffered: {
+			contactMethod: ContactMethod;
+			contactInfo: string;
+		}
+	}
+}

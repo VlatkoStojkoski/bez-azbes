@@ -1,14 +1,10 @@
 'use server';
 
-import { GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
-import { auth, clerkClient, currentUser } from "@clerk/nextjs/server";
+import { clerkClient, currentUser } from "@clerk/nextjs/server";
 import { z } from "zod";
 
-import { env } from "@/env";
-import prisma from "@/lib/api/db";
 import { ApiCreateReportResponse, createReport as createReportApi } from "@/lib/api/reports";
-import { DBReport, NewReport, newReportSchema } from "@/lib/api/reports.model";
-import { s3Client } from "@/lib/api/s3";
+import { DBReport, newReportSchema } from "@/lib/api/reports.model";
 import { createErrorResponse } from "@/utils/api";
 
 export async function createReport(prevState: ApiCreateReportResponse, formData: unknown): Promise<ApiCreateReportResponse> {
@@ -32,7 +28,6 @@ export async function createReport(prevState: ApiCreateReportResponse, formData:
 			preffered: {
 				contactMethod: reportData.contactMethod,
 				contactInfo: reportData.contactInfo,
-				address: reportData.address,
 			}
 		}
 	});
