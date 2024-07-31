@@ -14,7 +14,7 @@ export default function HomePage() {
           <LogoIcon className='size-12 sm:size-14 lg:size-20' withBackground />
           <span className='text-3xl sm:text-4xl lg:text-5xl font-bold'>Без Азбест</span>
         </div>
-        <p className="w-[clamp(20ch,75vw,30ch)] text-center text-lg lg:text-xl">Пријавете азбест во вашите опкружувања и помогнете ни да најдеме решение.</p>
+        <p className="w-[clamp(20ch,75vw,30ch)] text-center text-lg lg:text-xl">Пријавете азбест во вашите опкружувања и помогнете ни да го решиме проблемот.</p>
         <Button className="h-auto text-lg sm:text-xl px-5 py-2 flex flex-row items-center justify-center gap-2" asChild>
           <Link href="/reports/new">
             <Send className="size-6" /> Пријави

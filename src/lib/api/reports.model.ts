@@ -46,3 +46,4 @@ export const newReportSchema = z.object({
 export type NewReport = z.infer<typeof newReportSchema>;
 
 export type DBReport = Prisma.ReportGetPayload<{}>;
+export type DBReportWithPictureUrl = DBReport & { pictureUrl: string | null };

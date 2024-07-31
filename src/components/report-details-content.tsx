@@ -1,23 +1,24 @@
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { useMemo, useState, useTransition } from "react";
 
 import { formatDate } from 'date-fns';
-import { Check, Clock, Cross, Crosshair, MapPin, Trash, User, XIcon } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { Check, Clock, MapPin, Trash, User, XIcon } from "lucide-react";
 
 import { acceptReport as acceptReportApi, deleteReport as deleteReportApi, getReportPictureUrl, rejectReport as rejectReportApi } from "@/lib/api/reports";
-import { DBReport } from "@/lib/api/reports.model";
+import type { DBReportWithPictureUrl } from "@/lib/api/reports.model";
 import { contactMethods } from "@/lib/utils";
 
 import { Button } from "./ui/button";
 
-export function ReportDetailsContent({ report, shouldGetImage, acceptReportBtn, deleteReportBtn }: {
-	report: DBReport;
+export type ReportDetailsContentProps = {
+	report: DBReportWithPictureUrl;
 	shouldGetImage?: boolean;
 	acceptReportBtn?: boolean;
 	deleteReportBtn?: boolean;
-}) {
-	const router = useRouter();
+	refreshReport?: (id: string) => void;
+};
 
+export function ReportDetailsContent({ report, shouldGetImage, acceptReportBtn, deleteReportBtn, refreshReport }: ReportDetailsContentProps) {
+	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 	const [isAcceptReportPending, startAcceptReportTransition] = useTransition();
 	const [isDeletePostPending, startDeletePostTransition] = useTransition();
 
@@ -26,30 +27,15 @@ export function ReportDetailsContent({ report, shouldGetImage, acceptReportBtn, 
 	}, [report.contactMethod]);
 
 	const submittedAt = useMemo(() => {
-		console.log(report.createdAt);
 		return formatDate(report.createdAt, 'dd/MM/yyyy HH:mm');
 	}, [report.createdAt]);
 
-	const [pictureSrc, setPictureSrc] = useState<string | null>(null);
 	const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
-
-	useEffect(() => {
-		if ((shouldGetImage ?? true) === false || report.pictureBucket === null || report.pictureKey === null) {
-			return;
-		}
-
-		getReportPictureUrl({
-			pictureBucket: report.pictureBucket,
-			pictureKey: report.pictureKey,
-		}).then((pictureUrl) => {
-			setPictureSrc(pictureUrl);
-		});
-	}, [report.pictureBucket, report.pictureKey, shouldGetImage, report]);
 
 	function acceptReport() {
 		startAcceptReportTransition(() => {
 			acceptReportApi(report.id).then(() => {
-				router.refresh();
+				refreshReport?.(report.id);
 			});
 		});
 	}
@@ -57,7 +43,7 @@ export function ReportDetailsContent({ report, shouldGetImage, acceptReportBtn, 
 	function rejectReport() {
 		startAcceptReportTransition(() => {
 			rejectReportApi(report.id).then(() => {
-				router.refresh();
+				refreshReport?.(report.id);
 			});
 		});
 	}
@@ -65,7 +51,7 @@ export function ReportDetailsContent({ report, shouldGetImage, acceptReportBtn, 
 	function deleteReport() {
 		startDeletePostTransition(() => {
 			deleteReportApi(report.id).then(() => {
-				router.refresh();
+				refreshReport?.(report.id);
 			});
 		});
 	}
@@ -73,9 +59,9 @@ export function ReportDetailsContent({ report, shouldGetImage, acceptReportBtn, 
 	return (
 		<div className="flex flex-col gap-4 w-full h-full">
 			{
-				pictureSrc !== null && (
+				report.pictureUrl !== null && (
 					<div className="w-full h-[clamp(300px,30dvh,450px)] bg-background-secondary border rounded-lg overflow-hidden">
-						<img src={pictureSrc} alt={report.description} className='w-full h-full object-contain' />
+						<img src={report.pictureUrl} alt={report.description} className='w-full h-full object-contain' />
 					</div>
 				)
 			}
@@ -104,7 +90,7 @@ export function ReportDetailsContent({ report, shouldGetImage, acceptReportBtn, 
 			</div>
 
 			{
-				(acceptReportBtn || deleteReportBtn) && (
+				(acceptReportBtn || deleteReportBtn) && isDeleteDialogOpen === false && (
 					<div className="grid grid-cols-2 gap-x-2">
 						{
 							acceptReportBtn && (
@@ -123,16 +109,41 @@ export function ReportDetailsContent({ report, shouldGetImage, acceptReportBtn, 
 								</Button>
 							)
 						}
+
 						{
 							deleteReportBtn && (
-								<Button variant='destructive' className="col-start-2 col-span-1" onClick={deleteReport} disabled={isDeletePostPending}>
+								<Button
+									variant='destructive'
+									className="col-start-2 col-span-1"
+									onClick={() => setIsDeleteDialogOpen(true)}
+									disabled={isDeletePostPending}>
 									<Trash className="size-6 mr-2" /> Избриши
 								</Button>
 							)
 						}
+
 					</div>
 				)
 			}
+
+			{
+				isDeleteDialogOpen && (
+					<div className="col-start-2 col-span-1 w-[27ch] text-center mx-auto">
+						<h3 className="mb-2">Дали сте сигурни дека сакате да ја избришете пријавата?</h3>
+						<div className="grid grid-cols-2 gap-x-2 w-[20ch] mx-auto">
+							<Button variant='destructive' onClick={deleteReport} disabled={isDeletePostPending}>
+								<Trash className="size-4 mr-2" />
+								Да
+							</Button>
+							<Button variant='secondary' onClick={() => setIsDeleteDialogOpen(false)}>
+								<XIcon className="size-4 mr-2" />
+								Не
+							</Button>
+						</div>
+					</div>
+				)
+			}
+
 		</div>
 	);
 }

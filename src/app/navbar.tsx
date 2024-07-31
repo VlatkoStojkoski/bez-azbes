@@ -101,11 +101,11 @@ export async function Navbar() {
 								<DropdownMenuContent className='min-w-[17ch]'>
 									{navigationItems.map((item) => (
 										<DropdownMenuItem key={item.label} asChild>
-											<Link href={item.href} legacyBehavior passHref>
-												<Button variant='ghost' className='w-full flex items-center justify-start py-3 h-auto'>
+											<Button variant='ghost' className='w-full flex items-center justify-start py-3 h-auto' asChild>
+												<Link href={item.href}>
 													<item.icon className='size-6 mr-2' />{item.label}
-												</Button>
-											</Link>
+												</Link>
+											</Button>
 										</DropdownMenuItem>
 									))}
 								</DropdownMenuContent>

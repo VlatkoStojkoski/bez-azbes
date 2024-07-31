@@ -64,14 +64,3 @@ export const generateImageInputSchema = (MAX_IMAGE_SIZE: number, isOptional: boo
       file.type.startsWith("image/")
     );
   }, "Тој тип на слика не е поддржан");
-
-export function getBase64(file: File) {
-  var reader = new FileReader();
-  reader.readAsDataURL(file);
-  reader.onload = function () {
-    console.log(reader.result);
-  };
-  reader.onerror = function (error) {
-    console.log('Error: ', error);
-  };
-}

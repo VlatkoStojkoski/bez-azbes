@@ -8,7 +8,7 @@ import { ZodError } from "zod";
 
 import { env } from "@/env";
 import prisma from "@/lib/api/db";
-import { DBReport, NewReport } from "@/lib/api/reports.model";
+import { DBReport, DBReportWithPictureUrl, NewReport } from "@/lib/api/reports.model";
 import { s3Client } from "@/lib/api/s3";
 import { ApiResponse, createErrorResponse, createResponse } from "@/utils/api";
 
@@ -43,8 +43,6 @@ export async function createReport(reportData: NewReport, {
 
 		const pictureUploadResult = await s3Client.send(picturePutCommand);
 
-		console.log('PICTURE UPLOAD RESULT:', pictureUploadResult);
-
 		if (pictureUploadResult.$metadata.httpStatusCode !== 200) {
 			return createErrorResponse('Грешка при прикачување на сликата.');
 		}
@@ -74,12 +72,10 @@ export async function createReport(reportData: NewReport, {
 
 	const newReportRes = await prisma.report.create({ data });
 
-	console.log('NEW REPORT RES:', newReportRes);
-
 	return createResponse(newReportRes);
 }
 
-export async function getReports(config: { skip?: number, take?: number, sort?: 'oldest' | 'newest' }): Promise<ApiResponse<DBReport[]>> {
+export async function getReports(config: { skip?: number, take?: number, sort?: 'oldest' | 'newest' }): Promise<ApiResponse<DBReportWithPictureUrl[]>> {
 	let defaultConfig = {
 		skip: 0,
 		take: 10,
@@ -97,7 +93,9 @@ export async function getReports(config: { skip?: number, take?: number, sort?: 
 			},
 		});
 
-		return createResponse(reports);
+		const reportsWithPictureUrl = await Promise.all(reports.map(attachPictureUrlToReport));
+
+		return createResponse(reportsWithPictureUrl);
 	} catch (error) {
 		console.error('[getReports] ERROR:', error);
 
@@ -105,7 +103,7 @@ export async function getReports(config: { skip?: number, take?: number, sort?: 
 	}
 }
 
-export async function getAllReports(config: { sort?: 'oldest' | 'newest' }): Promise<ApiResponse<DBReport[]>> {
+export async function getAllReports(config: { sort?: 'oldest' | 'newest' }): Promise<ApiResponse<DBReportWithPictureUrl[]>> {
 	let defaultConfig = {
 		sort: 'newest',
 	};
@@ -113,7 +111,7 @@ export async function getAllReports(config: { sort?: 'oldest' | 'newest' }): Pro
 	const { sort } = { ...defaultConfig, ...config };
 
 	try {
-		const reports = await prisma.report.findMany({
+		const reportsData = await prisma.report.findMany({
 			orderBy: {
 				createdAt: sort === 'newest' ? 'desc' : 'asc',
 			},
@@ -122,7 +120,9 @@ export async function getAllReports(config: { sort?: 'oldest' | 'newest' }): Pro
 			}
 		});
 
-		return createResponse(reports);
+		const reportsWithPictureUrl = await Promise.all(reportsData.map(attachPictureUrlToReport));
+
+		return createResponse(reportsWithPictureUrl);
 	} catch (error) {
 		console.error('[getAllReports] ERROR:', error);
 
@@ -130,7 +130,7 @@ export async function getAllReports(config: { sort?: 'oldest' | 'newest' }): Pro
 	}
 }
 
-export async function getUsersReports(userId: string): Promise<ApiResponse<DBReport[]>> {
+export async function getUsersReports(userId: string): Promise<ApiResponse<DBReportWithPictureUrl[]>> {
 	try {
 		const reports = await prisma.report.findMany({
 			where: {
@@ -139,7 +139,9 @@ export async function getUsersReports(userId: string): Promise<ApiResponse<DBRep
 			}
 		});
 
-		return createResponse(reports);
+		const reportsWithPictureUrl = await Promise.all(reports.map(attachPictureUrlToReport));
+
+		return createResponse(reportsWithPictureUrl);
 	} catch (error) {
 		console.error('[getUsersReports] ERROR:', error);
 
@@ -147,7 +149,7 @@ export async function getUsersReports(userId: string): Promise<ApiResponse<DBRep
 	}
 }
 
-export async function getReport(id: string): Promise<ApiResponse<DBReport>> {
+export async function getReport(id: string): Promise<ApiResponse<DBReportWithPictureUrl>> {
 	try {
 		const report = await prisma.report.findUnique({
 			where: {
@@ -159,7 +161,9 @@ export async function getReport(id: string): Promise<ApiResponse<DBReport>> {
 			return createErrorResponse('Report not found');
 		}
 
-		return createResponse(report);
+		const reportWithPictureUrl = await attachPictureUrlToReport(report);
+
+		return createResponse(reportWithPictureUrl);
 	} catch (error) {
 		console.error('[getReport] ERROR:', error);
 
@@ -167,7 +171,7 @@ export async function getReport(id: string): Promise<ApiResponse<DBReport>> {
 	}
 }
 
-export async function updateReport(id: string, data: Partial<DBReport>): Promise<ApiResponse<DBReport>> {
+export async function updateReport(id: string, data: Partial<DBReportWithPictureUrl>): Promise<ApiResponse<DBReportWithPictureUrl>> {
 	try {
 		const report = await prisma.report.update({
 			data: {
@@ -178,7 +182,13 @@ export async function updateReport(id: string, data: Partial<DBReport>): Promise
 			}
 		});
 
-		return createResponse(report);
+		if (!report) {
+			return createErrorResponse('Пријавата не е пронајдена.');
+		}
+
+		const reportWithPictureUrl = await attachPictureUrlToReport(report);
+
+		return createResponse(reportWithPictureUrl);
 	} catch (error) {
 		console.error('[updateReport] ERROR:', error);
 
@@ -239,8 +249,7 @@ export async function getReportPictureUrl(reportData: {
 	return signedUrl;
 }
 
-
-export async function acceptReport(reportId: string): Promise<ApiResponse<DBReport>> {
+export async function acceptReport(reportId: string): Promise<ApiResponse<DBReportWithPictureUrl>> {
 	const res = await updateReport(reportId, {
 		isAccepted: true,
 	});
@@ -248,10 +257,23 @@ export async function acceptReport(reportId: string): Promise<ApiResponse<DBRepo
 	return res;
 }
 
-export async function rejectReport(reportId: string): Promise<ApiResponse<DBReport>> {
+export async function rejectReport(reportId: string): Promise<ApiResponse<DBReportWithPictureUrl>> {
 	const res = await updateReport(reportId, {
 		isAccepted: false,
 	});
 
 	return res;
+}
+
+export async function attachPictureUrlToReport(report: DBReport): Promise<DBReportWithPictureUrl> {
+	let pictureUrl: DBReportWithPictureUrl['pictureUrl'] = null;
+
+	if (report.pictureBucket && report.pictureKey) {
+		pictureUrl = await getReportPictureUrl({
+			pictureBucket: report.pictureBucket,
+			pictureKey: report.pictureKey,
+		});
+	}
+
+	return { ...report, pictureUrl };
 }

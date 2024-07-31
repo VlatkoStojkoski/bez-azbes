@@ -58,20 +58,9 @@ export function ReportForm({ defaults }: ReportFormProps) {
 			locationLat: defaultLocation.lat,
 			locationLng: defaultLocation.lng,
 		},
-		// defaultValues: {
-		// 	address: '',
-		// 	contactInfo: '',
-		// 	contactMethod: 'phone',
-		// 	description: '',
-		// 	fullName: '',
-		// 	locationLat: defaultLocation.lat,
-		// 	locationLng: defaultLocation.lng,
-		// },
 	});
 
 	useEffect(() => {
-		console.log(actionState);
-
 		const { success, data, error } = actionState;
 
 		if (success === null) {
@@ -84,9 +73,9 @@ export function ReportForm({ defaults }: ReportFormProps) {
 		}
 
 		if (success === true) {
-			toast.success('Пријавата е успешно испратена.');
 			form.reset();
-			router.push('/reports');
+			toast.success('Пријавата е успешно испратена.');
+			router.push(`/reports?id=${data.id}`);
 			return;
 		}
 	}, [actionState]);
@@ -100,15 +89,13 @@ export function ReportForm({ defaults }: ReportFormProps) {
 	return (
 		<Form {...form}>
 			<form className="flex flex-col gap-y-4" onSubmit={onSubmit}>
-				<ReportFormFields form={form} />
+				<ReportFormFields form={form} isPending={isTransitionPending} />
 			</form>
 		</Form>
 	);
 }
 
-function ReportFormFields({ form }: { form: UseFormReturn<NewReport> }) {
-	const { pending: isPending } = useFormStatus();
-
+function ReportFormFields({ form, isPending }: { form: UseFormReturn<NewReport>; isPending?: boolean; }) {
 	const pictureValue = form.watch('picture');
 	const contactMethodValue = form.watch('contactMethod');
 
@@ -226,7 +213,7 @@ function ReportFormFields({ form }: { form: UseFormReturn<NewReport> }) {
 					}} />
 				</FormControl>
 				<FormDescription>
-					Одберете ја точната локација на каде што се наоѓа азбестот.
+					Одберете ја точната локација каде што се наоѓа азбестот.
 				</FormDescription>
 				<FormMessage />
 			</FormItem>
@@ -273,7 +260,7 @@ function ReportFormFields({ form }: { form: UseFormReturn<NewReport> }) {
 
 			<Button type="submit" disabled={form.formState.isSubmitting} className="mt-6">
 				{
-					isPending ?
+					(isPending ?? false) ?
 						<LoaderCircle className="w-6 h-6 mr-2 animate-spin" /> :
 						null
 				}
