@@ -49,10 +49,10 @@ export const sizeInMB = (sizeInBytes: number, decimalsNum = 2) => {
   return +result.toFixed(decimalsNum);
 };
 
-export const generateImageInputSchema = (MAX_IMAGE_SIZE: number) => z
+export const generateImageInputSchema = (MAX_IMAGE_SIZE: number, isOptional: boolean = false) => z
   .custom<FileList>()
   .refine((files) => {
-    return Array.from(files ?? []).length !== 0;
+    return isOptional ? Array.from(files ?? []).length <= 1 : Array.from(files ?? []).length === 1;
   }, "Сликата е задолжителна")
   .refine((files) => {
     return Array.from(files ?? []).every(

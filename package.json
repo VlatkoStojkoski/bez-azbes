@@ -30,6 +30,7 @@
     "babel-plugin-react-compiler": "*",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "date-fns": "^3.6.0",
     "file-type": "^19.3.0",
     "libphonenumber-js": "^1.11.5",
     "lucide-react": "^0.416.0",

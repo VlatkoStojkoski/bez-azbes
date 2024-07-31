@@ -2,14 +2,14 @@
 
 import { useMemo, useState } from "react";
 
+import { twMerge } from "tailwind-merge";
+
 import { ReportDetailsContent } from "@/components/report-details-content";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonProps } from "@/components/ui/button";
 import {
 	Pagination,
 	PaginationContent,
-	PaginationEllipsis,
 	PaginationItem,
-	PaginationLink,
 	PaginationNext,
 	PaginationPrevious,
 } from "@/components/ui/pagination";
@@ -40,68 +40,74 @@ export function ReportsList({ allReports }: {
 	}
 
 	return (
-		<div className="w-full max-w-xl mx-auto">
+		<div className="w-full max-w-xl mx-auto px-3 py-6">
 			<div className="w-full flex flex-col gap-3">
 				{
 					currReports.map((report) => (
 						<div key={report.id} className="w-full p-4 border rounded-lg">
-							<ReportDetailsContent report={report} shouldGetImage={true} />
+							<ReportDetailsContent report={report} shouldGetImage={true} acceptReportBtn deleteReportBtn />
 						</div>
 					))
 				}
 			</div>
 
-			<Pagination className="my-6">
+			<Pagination className="mt-6">
 				<PaginationContent>
-					<div className="grid grid-cols-[1fr_auto_1fr] gap-x-4">
+					<div className="grid grid-cols-[1fr_auto_1fr] gap-x-2 sm:gap-x-4">
 						<PaginationItem>
-							<PaginationPrevious onClick={() => changePageBy(-1)} />
+							<PaginationPrevious className="cursor-pointer" onClick={() => changePageBy(-1)} />
 						</PaginationItem>
 
-						<div className="grid grid-cols-5 gap-x-2">
+						<div className="grid grid-cols-5 gap-x-2 items-center">
 							{
 								currPage > 1 && (
-									<PaginationItem className="col-start-1 col-span-1">
-										<Button onClick={() => goToPage(1)} variant='outline'>1</Button>
-									</PaginationItem>
+									<PaginationPageButton col={1} onClick={() => goToPage(1)} variant='outline'>
+										1
+									</PaginationPageButton>
 								)
 							}
 
 							{
 								currPage - 1 > 1 && (
-									<PaginationItem className="col-start-2 col-span-1">
-										<Button onClick={() => goToPage(currPage - 1)} variant='outline'>{currPage - 1}</Button>
-									</PaginationItem>
+									<PaginationPageButton col={2} onClick={() => goToPage(currPage - 1)} variant='outline'>
+										{currPage - 1}
+									</PaginationPageButton>
 								)
 							}
 
-							<PaginationItem className="col-start-3 col-span-1">
-								<Button variant='outline' disabled>{currPage}</Button>
-							</PaginationItem>
+							<PaginationPageButton col={3} disabled>{currPage}</PaginationPageButton>
 
 							{
 								currPage + 1 < lastPageNum && (
-									<PaginationItem className="col-start-4 col-span-1">
-										<Button onClick={() => goToPage(currPage + 1)} variant='outline'>{currPage + 1}</Button>
-									</PaginationItem>
+									<PaginationPageButton col={4} onClick={() => goToPage(currPage + 1)} variant='outline'>
+										{currPage + 1}
+									</PaginationPageButton>
 								)
 							}
 
 							{
 								currPage < lastPageNum && (
-									<PaginationItem className="col-start-5 col-span-1">
-										<Button onClick={() => goToPage(lastPageNum)} variant='outline'>{lastPageNum}</Button>
-									</PaginationItem>
+									<PaginationPageButton col={5} onClick={() => goToPage(lastPageNum)} variant='outline'>
+										{lastPageNum}
+									</PaginationPageButton>
 								)
 							}
 						</div>
 
 						<PaginationItem>
-							<PaginationNext onClick={() => changePageBy(1)} />
+							<PaginationNext className="cursor-pointer" onClick={() => changePageBy(1)} />
 						</PaginationItem>
 					</div>
 				</PaginationContent>
 			</Pagination>
 		</div>
+	);
+}
+
+function PaginationPageButton({ col, ...props }: ButtonProps & { col?: number; }) {
+	return (
+		<PaginationItem className={col ? `col-start-${col} col-span-1` : ''}> {/* col-start-1 col-start-2 col-start-3 col-start-4 col-start-5 */}
+			<Button className="w-10 h-8" variant='outline' {...props}>{props.children}</Button>
+		</PaginationItem>
 	);
 }

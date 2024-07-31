@@ -1,24 +1,16 @@
 'use server';
 
-import { GetObjectCommand, ListBucketsCommand, PutObjectCommand } from "@aws-sdk/client-s3";
-import {
-	S3RequestPresigner,
-	getSignedUrl,
-} from "@aws-sdk/s3-request-presigner";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { fileTypeFromBuffer } from 'file-type';
 import { v4 as uuidv4 } from 'uuid';
 import { ZodError } from "zod";
 
 import { env } from "@/env";
 import prisma from "@/lib/api/db";
-import { createReport as createReportApi } from "@/lib/api/reports";
-import { DBReport, NewReport, newReportSchema } from "@/lib/api/reports.model";
+import { DBReport, NewReport } from "@/lib/api/reports.model";
 import { s3Client } from "@/lib/api/s3";
 import { ApiResponse, createErrorResponse, createResponse } from "@/utils/api";
-import { waitTime } from "@/utils/general";
-
-import { reports } from "./test-data";
 
 export type ApiCreateReportResponse = ApiResponse<DBReport, { message: string, errors?: ZodError['errors'] }>;
 
@@ -29,50 +21,58 @@ export async function createReport(reportData: NewReport, {
 }): Promise<ApiCreateReportResponse> {
 	const reportId = uuidv4();
 
-	console.log('GENERATED REPORT ID:', reportId);
+	if (reportData?.picture && reportData.picture.length > 0) {
+		const pictureArrayBuffer = await reportData.picture[0].arrayBuffer();
 
-	const pictureArrayBuffer = await reportData.picture[0].arrayBuffer();
+		const pictureBuffer = Buffer.from(pictureArrayBuffer);
 
-	const pictureBuffer = Buffer.from(pictureArrayBuffer);
+		const fileType = await fileTypeFromBuffer(pictureBuffer);
 
-	const fileType = await fileTypeFromBuffer(pictureBuffer);
-
-	if (!fileType || !fileType.mime || fileType.mime.split('/')[0] !== 'image') {
-		return createErrorResponse('Невалиден формат на сликата.');
-	}
-
-	const contentType = fileType.mime;
-
-	const picturePutCommand = new PutObjectCommand({
-		Bucket: env.AWS_S3_PICS_BUCKET,
-		Key: `${reportId}`,
-		Body: pictureBuffer,
-		ContentType: contentType,
-	});
-
-	const pictureUploadResult = await s3Client.send(picturePutCommand);
-
-	console.log('PICTURE UPLOAD RESULT:', pictureUploadResult);
-
-	if (pictureUploadResult.$metadata.httpStatusCode !== 200) {
-		return createErrorResponse('Грешка при прикачување на сликата.');
-	}
-
-	const newReportRes = await prisma.report.create({
-		data: {
-			id: reportId,
-			contactFullName: reportData.fullName,
-			contactMethod: reportData.contactMethod,
-			contactInfo: reportData.contactInfo,
-			address: reportData.address,
-			description: reportData.description,
-			locationLat: reportData.locationLat,
-			locationLng: reportData.locationLng,
-			pictureBucket: env.AWS_S3_PICS_BUCKET,
-			pictureKey: reportId,
-			submittedBy: userId,
+		if (!fileType || !fileType.mime || fileType.mime.split('/')[0] !== 'image') {
+			return createErrorResponse('Невалиден формат на сликата.');
 		}
-	});
+
+		const contentType = fileType.mime;
+
+		const picturePutCommand = new PutObjectCommand({
+			Bucket: env.AWS_S3_PICS_BUCKET,
+			Key: `${reportId}`,
+			Body: pictureBuffer,
+			ContentType: contentType,
+		});
+
+		const pictureUploadResult = await s3Client.send(picturePutCommand);
+
+		console.log('PICTURE UPLOAD RESULT:', pictureUploadResult);
+
+		if (pictureUploadResult.$metadata.httpStatusCode !== 200) {
+			return createErrorResponse('Грешка при прикачување на сликата.');
+		}
+	}
+
+	const initData = {
+		id: reportId,
+		contactFullName: reportData.fullName,
+		contactMethod: reportData.contactMethod,
+		contactInfo: reportData.contactInfo,
+		address: reportData.address,
+		description: reportData.description,
+		locationLat: reportData.locationLat,
+		locationLng: reportData.locationLng,
+		submittedBy: userId,
+	};
+
+	const picData = reportData?.picture?.length ?? 0 > 0 ? {
+		pictureBucket: env.AWS_S3_PICS_BUCKET,
+		pictureKey: reportId,
+	} : {};
+
+	const data = {
+		...initData,
+		...picData,
+	};
+
+	const newReportRes = await prisma.report.create({ data });
 
 	console.log('NEW REPORT RES:', newReportRes);
 
@@ -112,12 +112,14 @@ export async function getAllReports(config: { sort?: 'oldest' | 'newest' }): Pro
 
 	const { sort } = { ...defaultConfig, ...config };
 
-
 	try {
 		const reports = await prisma.report.findMany({
 			orderBy: {
 				createdAt: sort === 'newest' ? 'desc' : 'asc',
 			},
+			where: {
+				isDeleted: false,
+			}
 		});
 
 		return createResponse(reports);
@@ -133,6 +135,7 @@ export async function getUsersReports(userId: string): Promise<ApiResponse<DBRep
 		const reports = await prisma.report.findMany({
 			where: {
 				submittedBy: userId,
+				isDeleted: false,
 			}
 		});
 
@@ -164,30 +167,42 @@ export async function getReport(id: string): Promise<ApiResponse<DBReport>> {
 	}
 }
 
-export async function updateReport(id: string, data: NewReport) {
-	await waitTime(1000);
+export async function updateReport(id: string, data: Partial<DBReport>): Promise<ApiResponse<DBReport>> {
+	try {
+		const report = await prisma.report.update({
+			data: {
+				...data,
+			},
+			where: {
+				id,
+			}
+		});
 
-	const report = reports.find((r) => r.id === id);
+		return createResponse(report);
+	} catch (error) {
+		console.error('[updateReport] ERROR:', error);
 
-	if (!report) {
-		return createErrorResponse('Report not found');
+		return createErrorResponse('Грешка при ажурирање на пријавата.');
 	}
-
-	Object.assign(report, data);
-
-	return createResponse(report);
 }
 
 export async function deleteReport(id: string) {
-	await waitTime(1000);
+	try {
+		const deleteRes = await prisma.report.update({
+			data: {
+				isDeleted: true,
+			},
+			where: {
+				id,
+			},
+		});
 
-	const index = reports.findIndex((r) => r.id === id);
+		return createResponse(deleteRes);
+	} catch (error) {
+		console.error('[deleteReport] ERROR:', error);
 
-	if (index === -1) {
-		return createErrorResponse('Report not found');
+		return createErrorResponse('Грешка при бришење на пријавата.');
 	}
-
-	return createResponse(reports.splice(index, 1));
 }
 
 export async function getReportPictureUrl(reportData: {
@@ -205,6 +220,10 @@ export async function getReportPictureUrl(reportData: {
 
 		pictureBucket = report.data.pictureBucket;
 		pictureKey = report.data.pictureKey;
+
+		if (!pictureBucket || !pictureKey) {
+			return null;
+		}
 	} else {
 		pictureBucket = reportData.pictureBucket;
 		pictureKey = reportData.pictureKey;
@@ -218,4 +237,21 @@ export async function getReportPictureUrl(reportData: {
 	const signedUrl = await getSignedUrl(s3Client, getCommand, { expiresIn: 1 * 60 * 60 });
 
 	return signedUrl;
+}
+
+
+export async function acceptReport(reportId: string): Promise<ApiResponse<DBReport>> {
+	const res = await updateReport(reportId, {
+		isAccepted: true,
+	});
+
+	return res;
+}
+
+export async function rejectReport(reportId: string): Promise<ApiResponse<DBReport>> {
+	const res = await updateReport(reportId, {
+		isAccepted: false,
+	});
+
+	return res;
 }

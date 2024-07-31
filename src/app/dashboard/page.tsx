@@ -8,13 +8,13 @@ export default async function AdminDashboard() {
 	const reports = await getAllReports({ sort: 'newest' });
 
 	return (
-		<div className="w-full h-full flex justify-center">
+		<div className="w-full h-full flex justify-center py-6">
 			{
 				reports.success === true && (
 					<Tabs defaultValue="list" className="w-full h-full">
-						<TabsList className="my-6 mx-auto w-full max-w-xl grid grid-cols-2 h-auto">
-							<TabsTrigger value="list" className="text-xl">Листа</TabsTrigger>
-							<TabsTrigger value="map" className="text-xl">Мапа</TabsTrigger>
+						<TabsList className="mx-auto w-full max-w-xl grid grid-cols-2 h-auto">
+							<TabsTrigger value="list" className="text-lg sm:text-xl">Листа</TabsTrigger>
+							<TabsTrigger value="map" className="text-lg sm:text-xl">Мапа</TabsTrigger>
 						</TabsList>
 						<TabsContent value="list">
 							<ReportsList allReports={reports.data} />

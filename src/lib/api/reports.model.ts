@@ -38,9 +38,9 @@ export const newReportSchema = z.object({
 	}).min(1, "Ве молиме внесете опис"),
 	locationLat: z.number(),
 	locationLng: z.number(),
-	picture: generateImageInputSchema(5).refine(fileList => fileList.length === 1, {
+	picture: generateImageInputSchema(5, true).refine(fileList => fileList.length <= 1, {
 		message: "Ве молиме прикачете само една слика",
-	}),
+	}).optional(),
 });
 
 export type NewReport = z.infer<typeof newReportSchema>;

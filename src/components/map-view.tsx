@@ -1,30 +1,27 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 
 import { APIProvider, AdvancedMarker, Map, type MapProps } from '@vis.gl/react-google-maps';
-import { MapPin, User } from 'lucide-react';
-import { useAsyncMemo } from "use-async-memo";
 
 import LogoIcon from '@/components/icons/logo';
 import { ReportDetailsContent } from '@/components/report-details-content';
 import {
 	Dialog,
 	DialogContent,
-	DialogHeader,
-	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
 import { env } from '@/env';
-import { getReportPictureUrl } from '@/lib/api/reports';
-import { DBReport } from '@/lib/api/reports.model';
-import { contactMethods, defaultLocation } from '@/lib/utils';
+import type { DBReport } from '@/lib/api/reports.model';
+import { defaultLocation } from '@/lib/utils';
 
 interface MapViewProps extends MapProps {
 	reports: DBReport[];
+	acceptReportBtn?: boolean;
+	deleteReportBtn?: boolean;
 }
 
-export function MapView({ reports, ...props }: MapViewProps) {
+export function MapView({ reports, acceptReportBtn, deleteReportBtn, ...props }: MapViewProps) {
 	return (
 		<APIProvider apiKey={env.NEXT_PUBLIC_MAPS_API_KEY} onLoad={() => console.log('Maps API has loaded.')}>
 			<Map
@@ -34,7 +31,7 @@ export function MapView({ reports, ...props }: MapViewProps) {
 				mapTypeId='hybrid'
 				{...props}>
 				{reports.map((location: DBReport) => (
-					<PoiMarker key={location.id} report={location} />
+					<PoiMarker key={location.id} report={location} acceptReportBtn={acceptReportBtn} deleteReportBtn={deleteReportBtn} />
 				))}
 			</Map>
 
@@ -42,7 +39,11 @@ export function MapView({ reports, ...props }: MapViewProps) {
 	);
 }
 
-function PoiMarker({ report }: { report: DBReport }) {
+function PoiMarker({ report, acceptReportBtn, deleteReportBtn }: {
+	report: DBReport;
+	acceptReportBtn?: boolean;
+	deleteReportBtn?: boolean;
+}) {
 	const [hasBeenOpened, setHasBeenOpened] = useState(false);
 
 	return (
@@ -59,13 +60,7 @@ function PoiMarker({ report }: { report: DBReport }) {
 					<LogoIcon className='size-10' />
 				</DialogTrigger>
 				<DialogContent className='rounded-lg'>
-					<DialogHeader>
-						<DialogTitle className='text-left w-[95%] leading-snug'>
-							{report.description}
-						</DialogTitle>
-					</DialogHeader>
-
-					<ReportDetailsContent report={report} shouldGetImage={hasBeenOpened} />
+					<ReportDetailsContent report={report} shouldGetImage={hasBeenOpened} acceptReportBtn={acceptReportBtn} deleteReportBtn={deleteReportBtn} />
 				</DialogContent>
 			</Dialog>
 		</AdvancedMarker>
