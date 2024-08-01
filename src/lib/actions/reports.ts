@@ -7,7 +7,7 @@ import { ApiCreateReportResponse, createReport as createReportApi } from "@/lib/
 import { DBReport, newReportSchema } from "@/lib/api/reports.model";
 import { createErrorResponse } from "@/utils/api";
 
-export async function createReport(prevState: ApiCreateReportResponse, formData: unknown): Promise<ApiCreateReportResponse> {
+export async function createReport(formData: unknown): Promise<ApiCreateReportResponse> {
 	const { data: reportData, error, success } = newReportSchema.safeParse(formData);
 
 	if (success === false) {

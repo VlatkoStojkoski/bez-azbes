@@ -61,7 +61,7 @@ export function useReportForm({ defaults }: UseReportFormProps) {
 
 	const onSubmit = form.handleSubmit(data => {
 		startTransition(() => {
-			createReport(actionState, data).then(setActionState);
+			createReport(data).then(setActionState);
 		});
 	});
 
