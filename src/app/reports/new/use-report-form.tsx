@@ -1,6 +1,7 @@
 'use client';
 
-import { useActionState, useEffect, useState, useTransition } from "react";
+import { useActionState, useEffect, useTransition } from "react";
+
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ContactMethod } from "@prisma/client";
@@ -9,7 +10,6 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 import { createReport } from "@/lib/actions/reports";
-import { ApiCreateReportResponse } from "@/lib/api/reports";
 import { NewReport, newReportSchema } from "@/lib/api/reports.model";
 import { defaultLocation } from "@/lib/utils";
 
@@ -22,7 +22,7 @@ export type UseReportFormProps = {
 };
 
 export function useReportForm({ defaults }: UseReportFormProps) {
-	const [actionState, setActionState] = useState<ApiCreateReportResponse>({ success: null, data: null, error: null });
+	const [actionState, formAction] = useActionState(createReport, { success: null, data: null, error: null });
 	const [isTransitionPending, startTransition] = useTransition();
 	const router = useRouter();
 
@@ -61,7 +61,7 @@ export function useReportForm({ defaults }: UseReportFormProps) {
 
 	const onSubmit = form.handleSubmit(data => {
 		startTransition(() => {
-			createReport(data).then(setActionState);
+			formAction(data);
 		});
 	});
 
