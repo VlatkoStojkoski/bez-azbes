@@ -8,7 +8,7 @@ import prisma from "@/lib/api/db";
 import { ClientReport, NewReport } from "@/lib/api/reports.model";
 import { AuthorizationError, DatabaseError, ValidationError } from "@/lib/errors";
 import { logger } from "@/lib/logger";
-import { ApiResponse, createErrorResponse, createResponse } from "@/utils/api";
+import { ApiResponse, createResponse } from "@/utils/api";
 
 import apiConfig from "./config";
 import { getClientPicture, insertPicture } from "./pictures";
