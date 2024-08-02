@@ -1,11 +1,11 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getAllReports } from "@/lib/api/reports";
+import { getReports } from "@/lib/api/reports";
 
 import { ReportsList } from "./reports-list";
 import { ReportsMap } from "./reports-map";
 
 export default async function AdminDashboard() {
-	const reports = await getAllReports({ sort: 'newest' });
+	const reports = await getReports({ sort: 'newest' });
 
 	return (
 		<div className="w-full h-full flex justify-center py-6">
@@ -17,10 +17,10 @@ export default async function AdminDashboard() {
 							<TabsTrigger value="map" className="text-lg sm:text-xl">Мапа</TabsTrigger>
 						</TabsList>
 						<TabsContent value="list">
-							<ReportsList allReports={reports.data} />
+							<ReportsList allReports={reports.data.reports} />
 						</TabsContent>
 						<TabsContent value="map" className="w-full h-full">
-							<ReportsMap allReports={reports.data} />
+							<ReportsMap allReports={reports.data.reports} />
 						</TabsContent>
 					</Tabs>
 				)

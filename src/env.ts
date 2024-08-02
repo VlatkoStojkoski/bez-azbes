@@ -8,6 +8,7 @@ export const env = createEnv({
 		AWS_ACCESS_KEY_ID: z.string().min(1),
 		AWS_SECRET_ACCESS_KEY: z.string().min(1),
 		AWS_S3_PICS_BUCKET: z.string().min(1),
+		AWS_S3_PICS_REGION: z.string().min(1),
 	},
 	client: {
 		NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),

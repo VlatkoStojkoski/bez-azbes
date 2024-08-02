@@ -1,8 +1,8 @@
 import { MapView } from "@/components/map-view";
-import type { DBReportWithPictureUrl } from "@/lib/api/reports.model";
+import { ClientReport } from "@/lib/api/reports.model";
 
 export function ReportsMap({ allReports }: {
-	allReports: DBReportWithPictureUrl[];
+	allReports: ClientReport[];
 }) {
 	return (
 		<MapView

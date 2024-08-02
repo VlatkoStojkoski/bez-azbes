@@ -33,8 +33,36 @@ model Report {
   description     String
   locationLat     Float
   locationLng     Float
-  pictureBucket   String?
-  pictureKey      String?
+
+  picture Picture?
 
   submittedBy String
+
+  @@index(isDeleted)
+  @@index([isDeleted, createdAt(sort: Desc)])
+  @@index([isDeleted, isAccepted])
+  @@index([isDeleted, submittedBy])
+}
+
+model Picture {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+  isDeleted Boolean  @default(false)
+
+  report   Report @relation(fields: [reportId], references: [id])
+  reportId String @unique
+
+  // All paths should follow the virtual-hosted–style URI scheme:
+  // https://bucket-name.s3.region-code.amazonaws.com/key-name
+  originalImageUrl  String
+  thumbnailImageUrl String? // 150x150
+  mediumImageUrl    String? // 600x400
+  largeImageUrl     String? // 1200x800
+
+  imageFormat String // e.g., "jpeg"
+  imageWidth  Int
+  imageHeight Int
+
+  @@index([isDeleted, reportId])
 }

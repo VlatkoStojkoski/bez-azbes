@@ -14,11 +14,11 @@ import {
 } from "@/components/ui/dialog";
 import { env } from '@/env';
 import { getReport } from '@/lib/api/reports';
-import type { DBReportWithPictureUrl } from '@/lib/api/reports.model';
+import { ClientReport } from '@/lib/api/reports.model';
 import { defaultLocation } from '@/lib/utils';
 
 interface MapViewProps extends MapProps {
-	reports: DBReportWithPictureUrl[];
+	reports: ClientReport[];
 	acceptReportBtn?: boolean;
 	deleteReportBtn?: boolean;
 	selectedReportId?: string;
@@ -54,7 +54,7 @@ export function MapView({ reports: initReports, acceptReportBtn, deleteReportBtn
 				defaultCenter={defaultLocation}
 				mapTypeId='hybrid'
 				{...props}>
-				{reports.map((report: DBReportWithPictureUrl) => (
+				{reports.map((report: ClientReport) => (
 					<ReportMarker
 						key={report.id}
 						report={report}

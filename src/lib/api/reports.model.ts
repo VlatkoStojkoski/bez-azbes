@@ -3,6 +3,8 @@ import { z } from "zod";
 
 import { generateImageInputSchema } from "@/lib/utils";
 
+import { ClientPicture, ClientPictureData } from "./pictures.model";
+
 const contactMethodSchema = z.enum(["PHONE", "EMAIL", "FACEBOOK"], {
 	message: "Ве молиме одберете валиден начин на контакт",
 	required_error: "Ве молиме одберете начин на контакт",
@@ -44,6 +46,4 @@ export const newReportSchema = z.object({
 });
 
 export type NewReport = z.infer<typeof newReportSchema>;
-
-export type DBReport = Prisma.ReportGetPayload<{}>;
-export type DBReportWithPictureUrl = DBReport & { pictureUrl: string | null };
+export type ClientReport = Prisma.ReportGetPayload<{}> & { picture: ClientPicture | null };

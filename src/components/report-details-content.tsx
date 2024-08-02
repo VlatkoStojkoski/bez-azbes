@@ -3,14 +3,14 @@ import { useMemo, useState, useTransition } from "react";
 import { formatDate } from 'date-fns';
 import { Check, Clock, MapPin, Trash, User, XIcon } from "lucide-react";
 
-import { acceptReport as acceptReportApi, deleteReport as deleteReportApi, getReportPictureUrl, rejectReport as rejectReportApi } from "@/lib/api/reports";
-import type { DBReportWithPictureUrl } from "@/lib/api/reports.model";
+import { acceptReport as acceptReportApi, deleteReport as deleteReportApi, rejectReport as rejectReportApi } from "@/lib/api/reports";
+import { ClientReport } from "@/lib/api/reports.model";
 import { contactMethods } from "@/lib/utils";
 
 import { Button } from "./ui/button";
 
 export type ReportDetailsContentProps = {
-	report: DBReportWithPictureUrl;
+	report: ClientReport;
 	shouldGetImage?: boolean;
 	acceptReportBtn?: boolean;
 	deleteReportBtn?: boolean;
@@ -59,9 +59,9 @@ export function ReportDetailsContent({ report, shouldGetImage, acceptReportBtn, 
 	return (
 		<div className="flex flex-col gap-4 w-full h-full">
 			{
-				report.pictureUrl !== null && (
+				report.picture?.sizes.large && (
 					<div className="w-full h-[clamp(300px,30dvh,450px)] bg-background-secondary border rounded-lg overflow-hidden">
-						<img src={report.pictureUrl} alt={report.description} className='w-full h-full object-contain' />
+						<img src={report.picture?.sizes.large} alt={report.description} className='w-full h-full object-contain' />
 					</div>
 				)
 			}

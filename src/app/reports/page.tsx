@@ -4,17 +4,12 @@ import { redirect } from "next/navigation";
 
 import { MapView } from "@/components/map-view";
 import { Button } from "@/components/ui/button";
-import { getUsersReports } from "@/lib/api/reports";
+import { getReports } from "@/lib/api/reports";
 
 export default async function ViewReportsPage({ searchParams }: {
 	searchParams?: Record<string, string | string[] | undefined>;
 }) {
-	const currUser = await currentUser();
-	if (!currUser) {
-		return redirect('/sign-in');
-	}
-
-	const reportsRes = await getUsersReports(currUser.id);
+	const reportsRes = await getReports({ onlyUserReports: true });
 
 	const selectedReportId = searchParams?.id as string | undefined;
 
@@ -23,7 +18,7 @@ export default async function ViewReportsPage({ searchParams }: {
 			<MapView
 				className="w-full h-full"
 				reports={
-					reportsRes.success === true ? reportsRes.data : []
+					reportsRes.success === true ? reportsRes.data.reports : []
 				}
 				selectedReportId={selectedReportId}
 				deleteReportBtn

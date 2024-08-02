@@ -14,11 +14,11 @@ import {
 	PaginationPrevious,
 } from "@/components/ui/pagination";
 import { getReport } from "@/lib/api/reports";
-import type { DBReportWithPictureUrl } from "@/lib/api/reports.model";
+import type { ClientReport } from "@/lib/api/reports.model";
 
 const step = 10;
 
-export function ReportsList({ allReports }: { allReports: DBReportWithPictureUrl[] }) {
+export function ReportsList({ allReports }: { allReports: ClientReport[] }) {
 	const [currPage, setCurrPage] = useState(1);
 	const [reports, setReports] = useState(allReports);
 
