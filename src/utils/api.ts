@@ -1,5 +1,3 @@
-import { ZodError } from "zod";
-
 type BaseError = {
 	message: string;
 }
