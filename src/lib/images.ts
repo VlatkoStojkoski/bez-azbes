@@ -22,7 +22,9 @@ export async function getSizedImageBuffers(image: sharp.Sharp): Promise<SizedIma
 			async ({ name, width, height }) => {
 				return [
 					name,
-					await lessQualityImage.resize(width, height).toBuffer()
+					await lessQualityImage.resize(width, height, {
+						fit: 'inside'
+					}).toBuffer()
 				];
 			}
 		)
