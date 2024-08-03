@@ -34,11 +34,7 @@ export async function getClientRankings({ limit = 10 }: { limit?: number }): Pro
 
 		const userIdList = topTotalSurfaceAreas.data.map(userTotalSurfaceArea => userTotalSurfaceArea.userId);
 
-		logger.log('User ID List', { userIdList });
-
 		const users = await clerkClient.users.getUserList({ userId: userIdList, limit });
-
-		logger.log('Users', { users });
 
 		const rankings = topTotalSurfaceAreas.data.map(userTotalSurfaceArea => {
 			const user = users.data.find(user => user.id === userTotalSurfaceArea.userId);

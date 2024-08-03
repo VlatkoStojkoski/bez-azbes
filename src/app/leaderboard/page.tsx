@@ -2,11 +2,36 @@ import { Medal } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 
 import { getClientRankings } from "@/lib/api/ranking";
+import { ClientRanking } from "@/lib/api/ranking.model";
+import { shuffle } from "@/lib/utils";
 
 export default async function LeaderboardPage() {
 	const rankings = await getClientRankings({ limit: 10 });
 
-	return rankings.success === true ? (
+	if (rankings.success !== true) {
+		return (
+			<div>
+				<h2>Грешка при вчитување на ранг листата</h2>
+			</div>
+		);
+	}
+
+	const sortedData = rankings.data.sort((a, b) => b.totalSurfaceArea - a.totalSurfaceArea);
+
+	const rankedGroupsData = sortedData.reduce((acc: ClientRanking[][], ranking, index) => {
+		const lastGroup = acc[acc.length - 1];
+
+		if (!lastGroup.length || ranking.totalSurfaceArea !== lastGroup[0].totalSurfaceArea) {
+			acc.push([ranking]);
+		} else {
+			lastGroup.push(ranking);
+		}
+
+		return acc;
+	}, [[]]);
+
+
+	return (
 		<>
 			<h1 className="text-2xl sm:text-3xl text-center flex flex-row gap-x-2 items-center font-bold mb-2">
 				<Medal className="size-7" /> Ранг Листа
@@ -19,16 +44,14 @@ export default async function LeaderboardPage() {
 					<span className="w-full text-right">Површина (м²)</span>
 				</div>
 				{
-					[...rankings.data].map((ranking, index) => (
-						<Ranking key={ranking.userId} index={index} name={ranking.user?.fullName ?? "Анонимен"} score={ranking.totalSurfaceArea} />
-					))
+					rankedGroupsData.map((rankingGroup, idx) => <>{
+						shuffle(rankingGroup).map(ranking => (
+							<Ranking key={ranking.userId} index={idx - 1} name={ranking.user?.fullName ?? "Анонимен"} score={ranking.totalSurfaceArea} />
+						))
+					}</>)
 				}
 			</div>
 		</>
-	) : (
-		<div>
-			<h2>Грешка при вчитување на ранг листата</h2>
-		</div>
 	);
 }
 
