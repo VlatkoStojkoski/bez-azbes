@@ -43,6 +43,7 @@ export const newReportSchema = z.object({
 	picture: generateImageInputSchema(5, true).refine(fileList => fileList.length <= 1, {
 		message: "Ве молиме прикачете само една слика",
 	}).optional(),
+	surfaceArea: z.number().int().optional()
 });
 
 export type NewReport = z.infer<typeof newReportSchema>;

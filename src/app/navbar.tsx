@@ -5,7 +5,7 @@ import {
 	UserButton
 } from '@clerk/nextjs';
 import { currentUser } from '@clerk/nextjs/server';
-import { ClipboardList, Home, LayoutDashboard, Menu, Users } from 'lucide-react';
+import { ClipboardList, Home, LayoutDashboard, Medal, Menu, Users } from 'lucide-react';
 import Link from 'next/link';
 
 import LogoIcon from '@/components/icons/logo';
@@ -42,9 +42,9 @@ const navigationMenuItems = [
 		href: '/reports',
 	},
 	{
-		icon: Users,
-		label: 'За Нас',
-		href: '/about',
+		icon: Medal,
+		label: 'Ранг Листа',
+		href: '/leaderboard',
 	},
 ];
 

@@ -90,13 +90,13 @@ const config = {
       spacing: {
         'navbar': 'calc(3rem + 2*theme(spacing.3))',
       },
+      backgroundImage: {
+        hero: 'url("/assets/img/hero.jpg")',
+      },
+      backgroundPosition: {
+        'hero-pos': 'center top',
+      }
     },
-    backgroundImage: {
-      hero: 'url("/assets/img/hero.jpg")',
-    },
-    backgroundPosition: {
-      'hero-pos': 'center top',
-    }
   },
   plugins: [require("tailwindcss-animate")],
 } satisfies Config;

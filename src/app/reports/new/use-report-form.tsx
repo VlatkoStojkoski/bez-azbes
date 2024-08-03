@@ -36,6 +36,7 @@ export function useReportForm({ defaults }: UseReportFormProps) {
 			fullName: defaults?.name ?? '',
 			locationLat: defaultLocation.lat,
 			locationLng: defaultLocation.lng,
+			surfaceArea: 0
 		},
 	});
 

@@ -40,6 +40,7 @@ export async function createReport(reportData: NewReport): Promise<ApiResponse<C
 			description: reportData.description,
 			locationLat: reportData.locationLat,
 			locationLng: reportData.locationLng,
+			surfaceArea: reportData.surfaceArea,
 			submittedBy: userId,
 		};
 

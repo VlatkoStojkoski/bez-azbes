@@ -20,11 +20,12 @@ enum ContactMethod {
 }
 
 model Report {
-  id         String   @id @default(uuid())
-  createdAt  DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt  DateTime @updatedAt @db.Timestamptz(3)
-  isDeleted  Boolean  @default(false)
-  isAccepted Boolean  @default(false)
+  id           String   @id @default(uuid())
+  createdAt    DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt    DateTime @updatedAt @db.Timestamptz(3)
+  isDeleted    Boolean  @default(false)
+  isAccepted   Boolean  @default(false)
+  isCalculated Boolean  @default(false)
 
   contactFullName String
   contactMethod   ContactMethod
@@ -33,6 +34,7 @@ model Report {
   description     String
   locationLat     Float
   locationLng     Float
+  surfaceArea     Float         @default(0) // in square meters
 
   picture Picture?
 
@@ -65,4 +67,9 @@ model Picture {
   imageHeight Int
 
   @@index([isDeleted, reportId])
+}
+
+model UserTotalSurfaceArea {
+  userId           String @id
+  totalSurfaceArea Float  @default(0) // in square meters
 }

@@ -68,6 +68,22 @@ export function ReportFormReportInfo() {
 				)}
 			/>
 
+			<FormField
+				control={form.control}
+				name="surfaceArea"
+				render={({ field: { onChange, ...fieldRest } }) => (
+					<FormItem>
+						<FormLabel>Азбестна Површина (м2)</FormLabel>
+						<FormControl>
+							<Input placeholder="20" className="max-w-[15ch]" type="number" onChange={(ev) => {
+								onChange(ev.target.value === '' ? 0 : parseInt(ev.target.value));
+							}} {...fieldRest} />
+						</FormControl>
+						<FormMessage />
+					</FormItem>
+				)}
+			/>
+
 			<ReportInfoPictureField form={form} />
 		</>
 	);
