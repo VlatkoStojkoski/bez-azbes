@@ -21,3 +21,5 @@ export function createErrorResponse<TData, TError extends BaseError>(
 		error: { message, ...extra } as TError
 	};
 }
+
+export const emptyResponse = { success: null, data: null, error: null } as const;

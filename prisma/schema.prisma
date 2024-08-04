@@ -70,6 +70,7 @@ model Picture {
 }
 
 model UserTotalSurfaceArea {
-  userId           String @id
-  totalSurfaceArea Float  @default(0) // in square meters
+  userId           String  @id
+  totalSurfaceArea Float   @default(0) // in square meters
+  isPrivate        Boolean @default(false)
 }

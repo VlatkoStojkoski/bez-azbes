@@ -95,6 +95,12 @@ const config = {
       },
       backgroundPosition: {
         'hero-pos': 'center top',
+      },
+      dropShadow: {
+        glow: [
+          "0 0 7px hsl(var(--primary) / 0.5)",
+          "0 0 20px hsl(var(--primary) / 0.2)",
+        ]
       }
     },
   },

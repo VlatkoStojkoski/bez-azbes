@@ -1,6 +1,4 @@
-import { currentUser } from "@clerk/nextjs/server";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 
 import { MapView } from "@/components/map-view";
 import { Button } from "@/components/ui/button";
