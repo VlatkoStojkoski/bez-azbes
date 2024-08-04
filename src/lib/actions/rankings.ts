@@ -12,8 +12,6 @@ import { logger } from "../logger";
 
 export async function getClientRankings(limit: number = DEFAULT_LIMIT): Promise<GetClientRankingsResponse> {
 	try {
-		console.log('getClientRankings');
-
 		const { data: topTotalSurfaceAreas, success } = await getTopTotalSurfaceAreas(limit);
 		if (!success) {
 			return createErrorResponse(ERROR_MESSAGE);

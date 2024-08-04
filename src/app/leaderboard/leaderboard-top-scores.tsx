@@ -2,10 +2,9 @@
 
 import { twMerge } from "tailwind-merge";
 
-import { UseLeaderboardTopScoresOutput } from "./use-leaderboard-top-scores";
+import { ClientRanking } from "@/lib/api/rankings.model";
 
-export function LeaderboardTopScores({ topRankings }: UseLeaderboardTopScoresOutput) {
-	console.log('LeaderboardTopScores - topRankings:', topRankings);
+export function LeaderboardTopScores({ topRankings }: { topRankings: ClientRanking[]; }) {
 	return (
 		<>
 			{

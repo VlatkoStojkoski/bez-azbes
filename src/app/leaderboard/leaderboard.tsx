@@ -2,20 +2,15 @@
 
 import { LeaderboardTopScores } from "./leaderboard-top-scores";
 import { LeaderboardUserRanking } from "./leaderboard-user-ranking";
-import { useLeaderboardTopScores } from "./use-leaderboard-top-scores";
-import { useLeaderboardUserRanking } from "./use-leaderboard-user-ranking";
+import { useLeaderboard } from "./use-leaderboard";
 
 export function Leaderboard() {
-	const userRankingData = useLeaderboardUserRanking();
-	const topScoresData = useLeaderboardTopScores();
-
-	console.log('Leaderboard - userRankingData:', userRankingData);
-	console.log('Leaderboard - topScoresData:', topScoresData);
+	const { rankings, userRanking } = useLeaderboard();
 
 	return (
 		<>
-			<LeaderboardTopScores {...topScoresData} />
-			<LeaderboardUserRanking refetchTopRankings={topScoresData.refetch} {...userRankingData} />
+			<LeaderboardTopScores topRankings={rankings.data} />
+			<LeaderboardUserRanking userRanking={userRanking.data} isPending={userRanking.isPending} updateUserRanking={userRanking.updateUserRanking} />
 		</>
 	);
 }
