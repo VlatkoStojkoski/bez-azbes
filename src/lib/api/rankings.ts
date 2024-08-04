@@ -16,7 +16,6 @@ export async function getTopTotalSurfaceAreas(limit: number = DEFAULT_LIMIT): Pr
 			where: { isPrivate: false },
 			take: limit,
 		});
-		console.log(sortedSurfaceAreas);
 		return createResponse(sortedSurfaceAreas);
 	} catch (error) {
 		logger.error('Error fetching leaderboard', { error });

@@ -49,17 +49,3 @@ function Ranking({ rank, name, score, isHighlighted }: { rank: number; name: str
 		</div>
 	);
 }
-
-export function RankingsSkeleton() {
-	return (
-		<>
-			{Array.from({ length: 10 }).map((_, idx) => (
-				<div key={idx} className="w-full bg-background border shadow-lg rounded-lg col-span-full grid grid-cols-subgrid place-items-center items-center justify-center animate-pulse">
-					<span className="p-3 size-[4ch] rounded-full leading-none bg-gradient-to-r font-bold text-center">1.</span>
-					<span className="p-3 break-words text-center">Loading...</span>
-					<span className="p-3 max-w-full">Loading...</span>
-				</div>
-			))}
-		</>
-	);
-}

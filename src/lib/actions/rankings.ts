@@ -11,15 +11,13 @@ import { ClientRanking } from "../api/rankings.model";
 import { logger } from "../logger";
 
 export async function getClientRankings(limit: number = DEFAULT_LIMIT): Promise<GetClientRankingsResponse> {
-	console.log('getClientRankings');
 	try {
+		console.log('getClientRankings');
 
 		const { data: topTotalSurfaceAreas, success } = await getTopTotalSurfaceAreas(limit);
 		if (!success) {
 			return createErrorResponse(ERROR_MESSAGE);
 		}
-
-		console.log('getClientRankings - data', topTotalSurfaceAreas);
 
 		const userIdList = topTotalSurfaceAreas.map(area => area.userId);
 		const { data: users } = await clerkClient.users.getUserList({ userId: userIdList, limit });
@@ -52,7 +50,6 @@ export type GetUserRankingResponse = ApiResponse<Prisma.UserTotalSurfaceAreaGetP
 export async function getUserRanking(): Promise<GetUserRankingResponse> {
 	try {
 		const { userId } = auth();
-		console.log('getUserRanking', userId);
 		if (!userId) {
 			return createErrorResponse(ERROR_MESSAGE);
 		}
@@ -60,7 +57,6 @@ export async function getUserRanking(): Promise<GetUserRankingResponse> {
 		const userRanking = await prisma.userTotalSurfaceArea.findUnique({
 			where: { userId }
 		});
-		console.log('getUserRanking - data', userRanking);
 
 		return userRanking
 			? createResponse(userRanking)

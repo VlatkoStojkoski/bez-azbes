@@ -2,7 +2,8 @@ import { Suspense } from "react";
 
 import { Medal } from "lucide-react";
 
-import { LeaderboardList, RankingsSkeleton } from "./leaderboard-list";
+import { LeaderboardList } from "./leaderboard-list";
+// import { RankingsSkeleton } from "./leaderboard-ranking-skeleton";
 
 export default async function LeaderboardPage() {
 	return (
