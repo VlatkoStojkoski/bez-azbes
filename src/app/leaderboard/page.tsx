@@ -16,21 +16,6 @@ export default async function LeaderboardPage() {
 		);
 	}
 
-	const sortedData = rankings.data.sort((a, b) => b.totalSurfaceArea - a.totalSurfaceArea);
-
-	const rankedGroupsData = sortedData.reduce((acc: ClientRanking[][], ranking, index) => {
-		const lastGroup = acc[acc.length - 1];
-
-		if (!lastGroup.length || ranking.totalSurfaceArea !== lastGroup[0].totalSurfaceArea) {
-			acc.push([ranking]);
-		} else {
-			lastGroup.push(ranking);
-		}
-
-		return acc;
-	}, [[]]);
-
-
 	return (
 		<>
 			<h1 className="text-2xl sm:text-3xl text-center flex flex-row gap-x-2 items-center font-bold mb-2">
@@ -44,11 +29,9 @@ export default async function LeaderboardPage() {
 					<span className="w-full text-right">Површина (м²)</span>
 				</div>
 				{
-					rankedGroupsData.map((rankingGroup, idx) => <>{
-						shuffle(rankingGroup).map(ranking => (
-							<Ranking key={ranking.userId} index={idx - 1} name={ranking.user?.fullName ?? "Анонимен"} score={ranking.totalSurfaceArea} />
-						))
-					}</>)
+					rankings.data.map((ranking, idx) => (
+						<Ranking key={ranking.userId} index={idx} name={ranking.user?.fullName ?? "Анонимен"} score={ranking.totalSurfaceArea} />
+					))
 				}
 			</div>
 		</>
