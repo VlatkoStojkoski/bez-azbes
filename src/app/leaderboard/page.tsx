@@ -2,8 +2,6 @@ import { Medal } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 
 import { getClientRankings } from "@/lib/api/ranking";
-import { ClientRanking } from "@/lib/api/ranking.model";
-import { shuffle } from "@/lib/utils";
 
 export default async function LeaderboardPage() {
 	const rankings = await getClientRankings({ limit: 10 });

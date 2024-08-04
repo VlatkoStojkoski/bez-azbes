@@ -1,5 +1,5 @@
 import { clerkClient } from "@clerk/nextjs/server";
-import { Prisma, UserTotalSurfaceArea } from "@prisma/client";
+import { UserTotalSurfaceArea } from "@prisma/client";
 
 import { ApiResponse, createErrorResponse, createResponse } from "@/utils/api";
 
