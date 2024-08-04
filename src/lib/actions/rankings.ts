@@ -21,6 +21,7 @@ export async function getClientRankings(limit: number = DEFAULT_LIMIT): Promise<
 		const { data: users } = await clerkClient.users.getUserList({ userId: userIdList, limit });
 
 		const rankedData = topTotalSurfaceAreas
+			.sort(() => Math.random() - 0.5)
 			.sort((a, b) => b.totalSurfaceArea - a.totalSurfaceArea)
 			.reduce<ClientRanking[]>((acc, user, index, arr) => {
 				const previousRanking = arr[index - 1];

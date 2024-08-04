@@ -2,14 +2,23 @@
 
 import { twMerge } from "tailwind-merge";
 
+import { Skeleton } from "@/components/ui/skeleton";
 import { ClientRanking } from "@/lib/api/rankings.model";
 
-export function LeaderboardTopScores({ topRankings }: { topRankings: ClientRanking[]; }) {
-	return (
+export function LeaderboardTopScores({ topRankings, userId, isPending }: { topRankings: ClientRanking[]; userId?: string | null; isPending: boolean; }) {
+	return isPending !== false ? (
+		<>
+			{
+				Array.from({ length: topRankings.length > 0 ? topRankings.length : 3 }, (_, idx) => (
+					<Skeleton key={idx} className="w-full h-14 col-span-full" />
+				))
+			}
+		</>
+	) : (
 		<>
 			{
 				topRankings && topRankings.map((ranking, idx) => (
-					<Ranking key={ranking.userId} rank={ranking.rank} name={ranking.userName ?? "Анонимен"} score={ranking.totalSurfaceArea} isHighlighted={ranking.userId === 'user1'} />
+					<Ranking key={ranking.userId} rank={ranking.rank} name={ranking.userName ?? "Анонимен"} score={ranking.totalSurfaceArea} isHighlighted={ranking.userId === userId} />
 				))
 			}
 		</>
