@@ -1,30 +1,28 @@
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useState } from "react";
 
 import { getClientRankings } from "@/lib/actions/rankings";
 import { GetClientRankingsResponse } from "@/lib/api/rankings";
 import { ClientRanking } from "@/lib/api/rankings.model";
 import { emptyResponse } from "@/utils/api";
 
-interface UseLeaderboardTopScoresOutput {
+export interface UseLeaderboardTopScoresOutput {
 	topRankings: ClientRanking[];
 	refetch: () => void;
 	isPending: boolean;
 }
 
 export function useLeaderboardTopScores(): UseLeaderboardTopScoresOutput {
-	const [isPending, startTransition] = useTransition();
+	const [isPending, setIsPending] = useState(false);
 	const [topRankingsRes, setTopRankingsRes] = useState<GetClientRankingsResponse>(emptyResponse);
 
-	function refetch() {
-		startTransition(async () => {
-			const trRes = await getClientRankings();
-			setTopRankingsRes(trRes);
-		});
+	async function refetch() {
+		console.log('useLeaderboardTopScores - refetching');
+		setIsPending(true);
+		const trRes = await getClientRankings();
+		console.log('useLeaderboardTopScores - trRes', trRes);
+		setTopRankingsRes(trRes);
+		setIsPending(false);
 	}
-
-	useEffect(() => {
-		refetch();
-	}, []);
 
 	return {
 		topRankings: topRankingsRes.data || [],

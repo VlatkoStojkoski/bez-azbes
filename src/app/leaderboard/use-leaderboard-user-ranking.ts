@@ -1,4 +1,4 @@
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useState } from "react";
 
 import { Prisma } from "@prisma/client";
 
@@ -6,7 +6,7 @@ import { GetUserRankingResponse, updateUserRanking as apiUpdateUserRanking, getU
 import { GetClientRankingsResponse } from "@/lib/api/rankings";
 import { emptyResponse } from "@/utils/api";
 
-interface UseLeaderboardUserRankingOutput {
+export interface UseLeaderboardUserRankingOutput {
 	userRanking: Prisma.UserTotalSurfaceAreaGetPayload<{}> | null;
 	refetch: () => void;
 	isPending: boolean;
@@ -14,25 +14,27 @@ interface UseLeaderboardUserRankingOutput {
 }
 
 export function useLeaderboardUserRanking(): UseLeaderboardUserRankingOutput {
-	const [isPending, startTransition] = useTransition();
+	const [isPending, setIsPending] = useState(false);
 	const [userRankingRes, setUserRankingRes] = useState<GetUserRankingResponse>(emptyResponse);
 
-	function refetch() {
-		startTransition(async () => {
-			const urRes = await getUserRanking();
-			setUserRankingRes(urRes);
-		});
+	async function refetch() {
+		console.log('useLeaderboardUserRanking - refetching');
+		setIsPending(true);
+		const urRes = await getUserRanking();
+		console.log('useLeaderboardUserRanking - urRes', urRes);
+		setUserRankingRes(urRes);
+		setIsPending(false);
 	}
 
 	useEffect(() => {
 		refetch();
 	}, []);
 
-	function updateUserRanking(isPrivate: boolean) {
-		startTransition(async () => {
-			const urRes = await apiUpdateUserRanking({ isPrivate });
-			setUserRankingRes(urRes);
-		});
+	async function updateUserRanking(isPrivate: boolean) {
+		setIsPending(true);
+		const urRes = await apiUpdateUserRanking({ isPrivate });
+		setUserRankingRes(urRes);
+		setIsPending(false);
 	}
 
 	return {

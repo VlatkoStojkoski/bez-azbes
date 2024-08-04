@@ -1,9 +1,6 @@
-import { Suspense } from "react";
-
 import { Medal } from "lucide-react";
 
-import { LeaderboardList } from "./leaderboard-list";
-// import { RankingsSkeleton } from "./leaderboard-ranking-skeleton";
+import { Leaderboard } from "./leaderboard";
 
 export default async function LeaderboardPage() {
 	return (
@@ -18,7 +15,7 @@ export default async function LeaderboardPage() {
 					<span className="w-full text-center">Име</span>
 					<span className="w-full text-right">Површина (м²)</span>
 				</div>
-				<LeaderboardList />
+				<Leaderboard />
 			</div>
 		</>
 	);
