@@ -74,7 +74,6 @@ type ReportMarkerProps = {
 } & ReportDetailsContentProps;
 
 function ReportMarker({ isOpen: initIsOpen, report, ...props }: ReportMarkerProps) {
-	const [hasBeenOpened, setHasBeenOpened] = useState(false);
 	const [isOpen, setIsOpen] = useState(initIsOpen);
 
 	return (
@@ -84,15 +83,14 @@ function ReportMarker({ isOpen: initIsOpen, report, ...props }: ReportMarkerProp
 				lat: report.locationLat,
 				lng: report.locationLng,
 			}}
-			onClick={() => { setHasBeenOpened(true); }}
 		>
 			<Dialog open={isOpen} onOpenChange={setIsOpen}>
-				<DialogTrigger onClick={() => setHasBeenOpened(true)}>
+				<DialogTrigger>
 					<LogoIcon className='size-10' />
 				</DialogTrigger>
 				<DialogContent className='rounded-lg'>
 					<DialogTitle className='hidden'>{report.description}</DialogTitle>
-					<ReportDetailsContent report={report} shouldGetImage={hasBeenOpened} {...props} />
+					<ReportDetailsContent report={report} {...props} />
 				</DialogContent>
 			</Dialog>
 		</AdvancedMarker>

@@ -64,7 +64,6 @@ export function ReportsList({ allReports }: { allReports: ClientReport[] }) {
 					<div key={report.id} className="w-full p-4 border rounded-lg max-w-[500px] h-full">
 						<ReportDetailsContent
 							report={report}
-							shouldGetImage={true}
 							refreshReport={refreshReport}
 							acceptReportBtn
 							deleteReportBtn
