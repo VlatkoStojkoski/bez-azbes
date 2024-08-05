@@ -83,7 +83,7 @@ function ReportMarker({ isOpen: initIsOpen, report, ...props }: ReportMarkerProp
 				lat: report.locationLat,
 				lng: report.locationLng,
 			}}
-			onClick={() => { setIsOpen(true); }}
+			onClick={() => { }}
 		>
 			<Dialog open={isOpen} onOpenChange={setIsOpen}>
 				<DialogTrigger>
