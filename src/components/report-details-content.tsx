@@ -1,7 +1,7 @@
 import { useMemo, useState, useTransition } from "react";
 
 import { formatDate } from 'date-fns';
-import { Check, Clock, MapPin, Trash, User, XIcon } from "lucide-react";
+import { Check, Clock, LandPlot, MapPin, Trash, User, XIcon } from "lucide-react";
 
 import { acceptReport as acceptReportApi, deleteReport as deleteReportApi, rejectReport as rejectReportApi } from "@/lib/api/reports";
 import { ClientReport } from "@/lib/api/reports.model";
@@ -11,13 +11,12 @@ import { Button } from "./ui/button";
 
 export type ReportDetailsContentProps = {
 	report: ClientReport;
-	shouldGetImage?: boolean;
 	acceptReportBtn?: boolean;
 	deleteReportBtn?: boolean;
 	refreshReport?: (id: string) => void;
 };
 
-export function ReportDetailsContent({ report, shouldGetImage, acceptReportBtn, deleteReportBtn, refreshReport }: ReportDetailsContentProps) {
+export function ReportDetailsContent({ report, acceptReportBtn, deleteReportBtn, refreshReport }: ReportDetailsContentProps) {
 	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 	const [isAcceptReportPending, startAcceptReportTransition] = useTransition();
 	const [isDeletePostPending, startDeletePostTransition] = useTransition();
@@ -70,20 +69,22 @@ export function ReportDetailsContent({ report, shouldGetImage, acceptReportBtn, 
 				{report.description}
 			</p>
 
-			<div className="grid grid-cols-[auto_1fr] gap-x-2 gap-y-4">
-				<User className='size-6' />
-				<h3>Пријавил: {report.contactFullName}</h3>
-				<contactMethod.icon className='size-6' />
-				<h3>Контакт: {report.contactInfo} ({contactMethod.label})</h3>
-				<MapPin className='size-6' />
-				<h3>Адреса: {report.address}</h3>
-				<Clock className='size-6' />
-				<h3>Пријавено на: {submittedAt}</h3>
+			<div className="relative grid grid-cols-[auto_1fr] place-items-center gap-x-2 gap-y-3">
+				<LandPlot className='size-5' />
+				<h3 className="w-full">Површина: {report.surfaceArea} м²</h3>
+				<User className='size-5' />
+				<h3 className="w-full">Пријавил: {report.contactFullName}</h3>
+				<contactMethod.icon className='size-5' />
+				<h3 className="w-full">Контакт: {report.contactInfo} ({contactMethod.label})</h3>
+				<MapPin className='size-5' />
+				<h3 className="w-full">Адреса: {report.address}</h3>
+				<Clock className='size-5' />
+				<h3 className="w-full">Пријавено на: {submittedAt}</h3>
 				{
 					report.isAccepted === true && (
-						<div className=" bg-green-400/20 text-green-400 rounded-lg w-fit px-3 py-1 grid grid-cols-subgrid col-span-2">
-							<Check className='size-6' />
-							<h3>Пријавата е прегледана и прифатена</h3>
+						<div className=" bg-green-400/20 text-green-400 rounded-lg w-fit px-3 py-1 grid grid-cols-subgrid col-span-full place-items-center">
+							<Check className='size-5' />
+							<h3 className="w-full">Пријавата е прегледана и прифатена</h3>
 						</div>
 					)
 				}
